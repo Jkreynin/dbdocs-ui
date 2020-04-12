@@ -10,28 +10,15 @@
           <h6 class="schema">{{ pageTable.schema }}</h6>
           <h3 class="card-title">
             {{ pageTable.name }}
-            <span class="badge" :class="tagsClass" v-for="tag in tags">{{
+            <span class="badge" :class="tagsClass" v-for="tag in tags">
+              {{
               tag
-            }}</span>
-          </h3>
-          <h5 class="card-subtitle mb-2 text-muted" :class="descClass">
-            {{ desc }}
-          </h5>
-          <vue-markdown
-            :source="add_desc"
-            class="card-text"
-            v-if="!isInEdit"
-          ></vue-markdown>
-          <div class="markDownArea" v-else>
-            <textarea
-              v-model="pageTable.add_desc"
-              class="form-control"
-              rows="2"
-            ></textarea>
-            <span class="mdIcon" data-toggle="tooltip" title="Markdown">
-              <i class="fab fa-markdown"></i>
+              }}
             </span>
-          </div>
+          </h3>
+          <h5 class="card-subtitle mb-2 text-muted" :class="descClass">{{ desc }}</h5>
+          <vue-markdown :source="add_desc" class="card-text" v-if="!isInEdit"></vue-markdown>
+          <textarea v-model="pageTable.add_desc" class="form-control" rows="2" v-else></textarea>
         </div>
         <!-- v-if="!listMode" -->
         <button
@@ -55,25 +42,18 @@
         <tbody>
           <tr v-for="column in pageTable.columns">
             <td>
-              <strong :class="columnNameClass(column.name)">{{
+              <strong :class="columnNameClass(column.name)">
+                {{
                 column.name
-              }}</strong>
+                }}
+              </strong>
             </td>
             <td>{{ column.type }}</td>
             <td class="desc" v-if="!isInEdit" style="text-align:right">
               <vue-markdown :source="column.desc"></vue-markdown>
             </td>
             <td v-else>
-              <div class="markDownArea">
-                <textarea
-                  v-model="column.desc"
-                  class="form-control"
-                  rows="2"
-                ></textarea>
-                <span class="mdIcon" data-toggle="tooltip" title="Markdown">
-                  <i class="fab fa-markdown"></i>
-                </span>
-              </div>
+              <textarea v-model="column.desc" class="form-control" rows="2"></textarea>
             </td>
           </tr>
         </tbody>
@@ -228,19 +208,5 @@ table {
 
 .highlight {
   color: var(--orange);
-}
-
-.mdIcon {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  left: 6px;
-  bottom: 0px;
-  margin-bottom: 8px;
-  opacity: 40%;
-}
-
-.markDownArea {
-  position: relative;
 }
 </style>

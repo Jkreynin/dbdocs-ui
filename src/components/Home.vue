@@ -1,6 +1,6 @@
 <template>
   <div>
-    <alert />
+    <Alert />
     <Filters />
     <Tables />
   </div>
@@ -9,7 +9,6 @@
 <script>
 import Filters from "./Filters.vue";
 import Tables from "./Tables.vue";
-import TableDoc from "./TableDoc.vue";
 import Alert from "./Alert.vue";
 
 export default {
@@ -17,8 +16,7 @@ export default {
   components: {
     Filters,
     Tables,
-    Alert,
-    TableDoc
+    Alert
   }
 };
 </script>

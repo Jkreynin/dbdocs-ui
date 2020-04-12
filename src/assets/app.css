@@ -21,6 +21,10 @@
     --dark-grey: #37474f;
 }
 
+html{
+    overflow-y: scroll;
+}
+
 * {
     font-family: Lato, openSans;
 }

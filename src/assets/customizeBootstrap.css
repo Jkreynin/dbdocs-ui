@@ -21,9 +21,9 @@
 }
 
 .card-text {
-    text-align: start!important;
-    unicode-bidi: plaintext!important;
-    direction: rtl;
+    text-align: start !important;
+    unicode-bidi: plaintext !important;
+    direction: rtl !important;
     font-size: 14px !important;
     color: #616161;
 }
@@ -32,11 +32,16 @@
     border: 1px solid #e9e9e9 !important;
 }
 
+textarea.form-control,
+input.form-control {
+    text-align: start;
+    direction: rtl;
+    unicode-bidi: plaintext;
+}
+
 textarea.form-control {
     resize: none !important;
     font-size: 14px !important;
-    text-align: start;
-    unicode-bidi: plaintext;
 }
 
 button:active,
@@ -56,8 +61,9 @@ button {
     box-shadow: none !important;
 }
 
-textarea.form-control:focus {
-    border: 1px solid #a5a5a5 !important;
+textarea.form-control:focus,
+input.form-control:focus {
+    border: 1px solid #b3b3b3 !important;
     box-shadow: none !important;
 }
 

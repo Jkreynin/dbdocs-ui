@@ -27,13 +27,14 @@
         </button>
       </div>
       <p class="card-text" :class="descClass" v-if="!isInEdit">{{ desc }}</p>
-      <textarea
+      <input class="form-control" v-model="mutableDesc" v-else>
+      <!-- <textarea
         v-model="mutableDesc"
         class="form-control"
         rows="2"
         v-else
       ></textarea>
-
+ -->
       <div v-if="!isInEdit" class="tags">
         <span class="badge" :class="tagsClass" v-for="tag in tags">{{
           tag
@@ -126,7 +127,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-textarea {
+input {
   margin-bottom: 3% !important;
 }
 
@@ -137,6 +138,7 @@ textarea {
 
 .link h5:hover {
   font-weight: 600;
+  cursor: pointer;
   opacity: 85%;
 }
 

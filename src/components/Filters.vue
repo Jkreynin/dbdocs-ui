@@ -19,11 +19,7 @@
       ></multiselect>
     </div>
     <div class="col-1">
-      <div
-        class="btn-group mr-2 btn-group-sm"
-        role="group"
-        aria-label="Basic example"
-      >
+      <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Basic example">
         <button
           type="button"
           @click="toggleReadMode"
@@ -105,6 +101,10 @@ export default {
   padding-top: 8px;
   background: #fff;
   font-size: 14px;
+}
+
+#search:focus {
+  border: 1px solid #e8e8e8!important;
 }
 
 .multiselect__placeholder {
