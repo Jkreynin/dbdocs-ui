@@ -28,13 +28,6 @@
       </div>
       <p class="card-text" :class="descClass" v-if="!isInEdit">{{ desc }}</p>
       <input class="form-control" v-model="mutableDesc" v-else>
-      <!-- <textarea
-        v-model="mutableDesc"
-        class="form-control"
-        rows="2"
-        v-else
-      ></textarea>
- -->
       <div v-if="!isInEdit" class="tags">
         <span class="badge" :class="tagsClass" v-for="tag in tags">{{
           tag
