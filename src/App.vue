@@ -1,31 +1,94 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <nav class="navbar">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-database"></i>DB Docs
+      </a>
+      <div class="nav navbar-nav navbar-right">
+        <div class="btn-nav">
+          <button type="button" :disabled="busy" class="btn-refresh" @click="refreshTables">
+            <i class="fas fa-sync" :class="{ 'fa-spin': busy }"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+    <div class="container" id="v">
+      <router-view :key="componentKey"></router-view>
     </div>
-    <router-view />
   </div>
 </template>
 
+<script>
+import * as api from "./api.js";
+import { mapActions } from "vuex";
+export default {
+  name: "app",
+  data() {
+    return {
+      componentKey: 0,
+      busy: false
+    };
+  },
+  methods: {
+    ...mapActions("tables", ["loadTables", "loadTags"]),
+    refreshTables() {
+      this.busy = true;
+      api
+        .refresh()
+        .then(() => {
+          this.loadTables();
+          this.loadTags();
+          this.componentKey += 1;
+          this.busy = false;
+        })
+        .catch(() => {
+          this.$toasted.show("Could not synchronize tables");
+          this.busy = false;
+        });
+    }
+  }
+};
+</script>
+
 <style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
+.navbar {
+  background-color: var(--dark-grey) !important;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.fa-database {
+  font-size: 25px;
+  color: var(--secondary-main);
+  display: block;
+  background: -webkit-linear-gradient(var(--secondary-main), var(--main-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.navbar-brand,
+.navbar-brand:hover {
+  color: var(--main-color);
+  font-family: cairoB;
 }
+
+.btn-refresh {
+  background: none;
+  color: white;
+  font-size: 20px;
+  border: none;
+  font-weight: normal;
+}
+
+.btn-refresh:hover {
+  opacity: 80%;
+}
+
+.btn-refresh:disabled {
+  color: var(--main-color);
+  opacity: 100%;
+}
+</style>
+<style scoped>
+@import "./assets/customizeBootstrap.css";
+@import "./assets/app.css";
+@import "./assets/table.css";
 </style>

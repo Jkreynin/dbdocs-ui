@@ -1,0 +1,37 @@
+.card-subtitle {
+    text-align: start;
+    unicode-bidi: plaintext;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.tags {
+    margin-top: auto;
+}
+
+textarea {
+    margin-bottom: 3% !important;
+}
+
+.cardInEdit {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22) !important;
+}
+
+.badge {
+    opacity: 90%;
+}
+
+.noTags {
+    background-color: rgb(172, 172, 172) !important;
+}
+
+.noDesc {
+    opacity: 70% !important;
+}
+
+.schema {
+    color: rgb(177, 177, 177);
+}

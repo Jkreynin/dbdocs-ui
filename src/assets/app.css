@@ -1,0 +1,40 @@
+@font-face {
+    font-family: Lato;
+    src: url(Lato-Regular.woff);
+}
+
+@font-face {
+    font-family: cairoB;
+    src: url(Cairo-SemiBold-600.ttf);
+}
+
+@font-face {
+    font-family: openSans;
+    src: url(OpenSansHebrew-Regular.ttf);
+}
+
+:root {
+    --main-color: #aee66a;
+    --darker-main: #9fd360;
+    --secondary-main: #56ab2f;
+    --light-grey: #e8e8e8;
+    --dark-grey: #37474f;
+}
+
+* {
+    font-family: Lato, openSans;
+}
+
+.customToast {
+    background-color: var(--dark-grey) !important;
+    text-align: left !important;
+}
+
+.customToast i {
+    color: #F4511E !important;
+    font-size: 17px !important;
+}
+
+.toasted-container .toasted {
+    justify-content: unset !important;
+}

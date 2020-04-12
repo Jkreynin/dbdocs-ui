@@ -1,0 +1,74 @@
+.btn-circle {
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    padding: 6px 0px !important;
+    position: relative;
+    border-radius: 15px !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    z-index: 1;
+    line-height: 1.42857 !important;
+    margin-bottom: 1%;
+}
+
+.badge {
+    background: var(--main-color);
+    color: white;
+    margin: 1px;
+    font-weight: normal !important;
+    font-size: 14px;
+}
+
+.card-text {
+    text-align: start!important;
+    unicode-bidi: plaintext!important;
+    direction: rtl;
+    font-size: 14px !important;
+    color: #616161;
+}
+
+.card {
+    border: 1px solid #e9e9e9 !important;
+}
+
+textarea.form-control {
+    resize: none !important;
+    font-size: 14px !important;
+    text-align: start;
+    unicode-bidi: plaintext;
+}
+
+button:active,
+button:focus,
+button:hover,
+button {
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+}
+
+.btn-light {
+    color: rgb(128, 128, 128) !important;
+}
+
+.form-control:focus {
+    box-shadow: none !important;
+}
+
+textarea.form-control:focus {
+    border: 1px solid #a5a5a5 !important;
+    box-shadow: none !important;
+}
+
+.form-control::placeholder {
+    color: #adadad !important;
+}
+
+.container {
+    margin-top: 1%;
+}
+
+.row {
+    margin-bottom: 1%;
+}
