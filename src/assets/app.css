@@ -21,7 +21,7 @@
     --dark-grey: #37474f;
 }
 
-html{
+html {
     overflow-y: scroll;
 }
 
@@ -46,4 +46,9 @@ html{
 
 .toasted-container .toasted {
     justify-content: unset !important;
+}
+
+p {
+    text-align: start !important;
+    unicode-bidi: plaintext !important;
 }

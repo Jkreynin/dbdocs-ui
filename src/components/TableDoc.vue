@@ -50,7 +50,7 @@
             </td>
             <td>{{ column.type }}</td>
             <td class="desc" v-if="!isInEdit" style="text-align:right">
-              <vue-markdown :source="column.desc"></vue-markdown>
+              <vue-markdown :source="column.desc" class="card-text"></vue-markdown>
             </td>
             <td v-else>
               <textarea v-model="column.desc" class="form-control" rows="2"></textarea>

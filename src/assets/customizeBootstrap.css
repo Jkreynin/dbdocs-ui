@@ -35,13 +35,12 @@
 textarea.form-control,
 input.form-control {
     text-align: start;
-    direction: rtl;
     unicode-bidi: plaintext;
+    font-size: 14px !important;
 }
 
 textarea.form-control {
     resize: none !important;
-    font-size: 14px !important;
 }
 
 button:active,
