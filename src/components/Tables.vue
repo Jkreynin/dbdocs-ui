@@ -1,5 +1,9 @@
 <template>
-  <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+  <div
+    v-infinite-scroll="loadMore"
+    infinite-scroll-disabled="busy"
+    infinite-scroll-distance="10"
+  >
     <spinner v-if="spin" />
     <div class="row" v-if="!readMode">
       <div class="col-4" v-for="table in trimmedTables">

@@ -1,14 +1,19 @@
 <template>
-  <div class="card h-100" :class="{cardInEdit:isInEdit}">
+  <div class="card h-100" :class="{ cardInEdit: isInEdit }">
     <div class="card-body">
       <div class="d-flex justify-content-between" style="  flex-wrap: wrap;">
         <div class="tableDetails">
-          <h6 class="schema">{{table.schema}}</h6>
+          <h6 class="schema">{{ table.schema }}</h6>
           <router-link
             class="link"
-            :to="{ name: 'table', params: { name: this.table.name, schema: this.table.schema } }"
+            :to="{
+              name: 'table',
+              params: { name: this.table.name, schema: this.table.schema }
+            }"
           >
-            <h5 class="tableName" :style="{ fontSize: fontSize + 'px' }">{{table.name}}</h5>
+            <h5 class="tableName" :style="{ fontSize: fontSize + 'px' }">
+              {{ table.name }}
+            </h5>
           </router-link>
         </div>
 
@@ -16,16 +21,23 @@
           type="button"
           class="btn btn-circle"
           @click="editOrSave"
-          :class="isInEdit? 'btn-primary' : 'btn-light'"
+          :class="isInEdit ? 'btn-primary' : 'btn-light'"
         >
           <i class="fas" :class="buttonIconClass"></i>
         </button>
       </div>
-      <p class="card-text" :class="descClass" v-if="!isInEdit">{{desc}}</p>
-      <textarea v-model="mutableDesc" class="form-control" rows="2" v-else></textarea>
+      <p class="card-text" :class="descClass" v-if="!isInEdit">{{ desc }}</p>
+      <textarea
+        v-model="mutableDesc"
+        class="form-control"
+        rows="2"
+        v-else
+      ></textarea>
 
       <div v-if="!isInEdit" class="tags">
-        <span class="badge" :class="tagsClass" v-for="tag in tags">{{tag}}</span>
+        <span class="badge" :class="tagsClass" v-for="tag in tags">{{
+          tag
+        }}</span>
       </div>
       <multiselect
         v-else

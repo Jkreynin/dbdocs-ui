@@ -2,8 +2,8 @@
   <div v-if="visible">
     <div class="alert alert-dismissible fade show" role="alert">
       <i class="far" :class="icon"></i>
-      <strong>{{coverage}}% coverage ({{haveDocs}}/{{total}}) -</strong>
-      {{message}}
+      <strong>{{ coverage }}% coverage ({{ haveDocs }}/{{ total }}) -</strong>
+      {{ message }}
       <button
         type="button"
         class="close"
@@ -25,7 +25,7 @@
         aria-valuemax="100"
       ></div>
     </div>
-    <br>
+    <br />
   </div>
 </template>
 
@@ -39,7 +39,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("tables", ["coverage","total","haveDocs"]),
+    ...mapGetters("tables", ["coverage", "total", "haveDocs"]),
     message() {
       switch (this.quality()) {
         case "Bad":

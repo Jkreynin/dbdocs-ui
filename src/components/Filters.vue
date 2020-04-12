@@ -19,12 +19,16 @@
       ></multiselect>
     </div>
     <div class="col-1">
-      <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Basic example">
+      <div
+        class="btn-group mr-2 btn-group-sm"
+        role="group"
+        aria-label="Basic example"
+      >
         <button
           type="button"
           @click="toggleReadMode"
           class="btn"
-          :class="readMode? 'btn-disabled' : 'btn-enabled'"
+          :class="readMode ? 'btn-disabled' : 'btn-enabled'"
         >
           <i class="fas fa-th"></i>
         </button>
@@ -32,7 +36,7 @@
           type="button"
           @click="toggleReadMode"
           class="btn"
-          :class="readMode? 'btn-enabled' : 'btn-disabled'"
+          :class="readMode ? 'btn-enabled' : 'btn-disabled'"
         >
           <i class="fas fa-book"></i>
         </button>

@@ -1,17 +1,33 @@
 <template>
-  <div class="card" :class="{cardInEdit:isInEdit}" v-if="Object.keys(this.pageTable).length != 0">
+  <div
+    class="card"
+    :class="{ cardInEdit: isInEdit }"
+    v-if="Object.keys(this.pageTable).length != 0"
+  >
     <div class="card-body">
       <div class="d-flex justify-content-between">
         <div class="header">
-          <h6 class="schema">{{pageTable.schema}}</h6>
+          <h6 class="schema">{{ pageTable.schema }}</h6>
           <h3 class="card-title">
-            {{pageTable.name}}
-            <span class="badge" :class="tagsClass" v-for="tag in tags">{{tag}}</span>
+            {{ pageTable.name }}
+            <span class="badge" :class="tagsClass" v-for="tag in tags">{{
+              tag
+            }}</span>
           </h3>
-          <h5 class="card-subtitle mb-2 text-muted" :class="descClass">{{desc}}</h5>
-          <vue-markdown :source="add_desc" class="card-text" v-if="!isInEdit"></vue-markdown>
+          <h5 class="card-subtitle mb-2 text-muted" :class="descClass">
+            {{ desc }}
+          </h5>
+          <vue-markdown
+            :source="add_desc"
+            class="card-text"
+            v-if="!isInEdit"
+          ></vue-markdown>
           <div class="markDownArea" v-else>
-            <textarea v-model="pageTable.add_desc" class="form-control" rows="2"></textarea>
+            <textarea
+              v-model="pageTable.add_desc"
+              class="form-control"
+              rows="2"
+            ></textarea>
             <span class="mdIcon" data-toggle="tooltip" title="Markdown">
               <i class="fab fa-markdown"></i>
             </span>
@@ -22,7 +38,7 @@
           type="button"
           class="btn btn-circle"
           @click="editOrSave"
-          :class="isInEdit? 'btn-primary' : 'btn-light'"
+          :class="isInEdit ? 'btn-primary' : 'btn-light'"
         >
           <i class="fas" :class="buttonIconClass"></i>
         </button>
@@ -39,15 +55,21 @@
         <tbody>
           <tr v-for="column in pageTable.columns">
             <td>
-              <strong :class="columnNameClass(column.name)">{{column.name}}</strong>
+              <strong :class="columnNameClass(column.name)">{{
+                column.name
+              }}</strong>
             </td>
-            <td>{{column.type}}</td>
+            <td>{{ column.type }}</td>
             <td class="desc" v-if="!isInEdit" style="text-align:right">
               <vue-markdown :source="column.desc"></vue-markdown>
             </td>
             <td v-else>
               <div class="markDownArea">
-                <textarea v-model="column.desc" class="form-control" rows="2"></textarea>
+                <textarea
+                  v-model="column.desc"
+                  class="form-control"
+                  rows="2"
+                ></textarea>
                 <span class="mdIcon" data-toggle="tooltip" title="Markdown">
                   <i class="fab fa-markdown"></i>
                 </span>

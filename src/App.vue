@@ -6,7 +6,12 @@
       </a>
       <div class="nav navbar-nav navbar-right">
         <div class="btn-nav">
-          <button type="button" :disabled="busy" class="btn-refresh" @click="refreshTables">
+          <button
+            type="button"
+            :disabled="busy"
+            class="btn-refresh"
+            @click="refreshTables"
+          >
             <i class="fas fa-sync" :class="{ 'fa-spin': busy }"></i>
           </button>
         </div>

@@ -1,15 +1,15 @@
 <template>
   <div>
-    <alert/>
-    <Filters/>
-     <Tables/>
+    <alert />
+    <Filters />
+    <Tables />
   </div>
 </template>
 
 <script>
 import Filters from "./Filters.vue";
 import Tables from "./Tables.vue";
-import TableDoc from "./TableDoc.vue"
+import TableDoc from "./TableDoc.vue";
 import Alert from "./Alert.vue";
 
 export default {
@@ -23,5 +23,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
