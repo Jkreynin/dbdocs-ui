@@ -137,9 +137,9 @@ input {
 }
 
 .link h5:hover {
-  font-weight: 600;
   cursor: pointer;
-  opacity: 85%;
+  font-weight: 600;
+  color: #404040;
 }
 
 .card:hover {

@@ -39,6 +39,11 @@ html{
     font-size: 17px !important;
 }
 
+.customSuccessToast i {
+    color: var(--secondary-main) !important;
+    font-size: 17px !important;
+}
+
 .toasted-container .toasted {
     justify-content: unset !important;
 }

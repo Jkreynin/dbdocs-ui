@@ -1,17 +1,12 @@
 <template>
   <div id="app">
     <nav class="navbar">
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" href="#/">
         <i class="fas fa-database"></i>DB Docs
       </a>
       <div class="nav navbar-nav navbar-right">
         <div class="btn-nav">
-          <button
-            type="button"
-            :disabled="busy"
-            class="btn-refresh"
-            @click="refreshTables"
-          >
+          <button type="button" :disabled="busy" class="btn-refresh" @click="refreshTables">
             <i class="fas fa-sync" :class="{ 'fa-spin': busy }"></i>
           </button>
         </div>
@@ -45,6 +40,10 @@ export default {
           this.loadTags();
           this.componentKey += 1;
           this.busy = false;
+          this.$toasted.show("Refreshed Successfully!", {
+            icon: "fa-check",
+            className: "customSuccessToast"
+          });
         })
         .catch(() => {
           this.$toasted.show("Could not synchronize tables");
@@ -69,6 +68,10 @@ export default {
   -webkit-text-fill-color: transparent;
 }
 
+.navbar-brand {
+  display: flex;
+}
+
 .navbar-brand,
 .navbar-brand:hover {
   color: var(--main-color);
@@ -84,12 +87,11 @@ export default {
 }
 
 .btn-refresh:hover {
-  opacity: 80%;
+  color: rgb(204, 204, 204);
 }
 
 .btn-refresh:disabled {
   color: var(--main-color);
-  opacity: 100%;
 }
 </style>
 <style scoped>
