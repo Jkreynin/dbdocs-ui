@@ -18,7 +18,13 @@
           </h3>
           <h5 class="card-subtitle mb-2 text-muted" :class="descClass">{{ desc }}</h5>
           <vue-markdown :source="add_desc" class="card-text" v-if="!isInEdit"></vue-markdown>
-          <textarea v-model="pageTable.add_desc" class="form-control" rows="2" v-else></textarea>
+          <textarea
+            v-model="pageTable.add_desc"
+            placeholder="You can use Markdown!"
+            class="form-control"
+            rows="2"
+            v-else
+          ></textarea>
         </div>
         <!-- v-if="!listMode" -->
         <button
@@ -42,15 +48,11 @@
         <tbody>
           <tr v-for="column in pageTable.columns">
             <td>
-              <strong :class="columnNameClass(column.name)">
-                {{
-                column.name
-                }}
-              </strong>
+              <strong :class="columnNameClass(column.name)">{{column.name}}</strong>
             </td>
             <td>{{ column.type }}</td>
             <td class="desc" v-if="!isInEdit" style="text-align:right">
-              <vue-markdown :source="column.desc" class="card-text"></vue-markdown>
+              <p>{{column.desc}}</p>
             </td>
             <td v-else>
               <textarea v-model="column.desc" class="form-control" rows="2"></textarea>
@@ -194,6 +196,7 @@ th {
 td {
   color: #616161;
 }
+
 table {
   margin-top: 2%;
 }
