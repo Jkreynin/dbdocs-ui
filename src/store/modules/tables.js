@@ -21,7 +21,7 @@ const getters = {
         table.desc.toLowerCase().includes(currFilter) ||
         (state.readMode &&
           table.columns
-            .map(column => column.name)
+            .map(column => column.name.toLowerCase())
             .filter(name => name.includes(currFilter)).length > 0)) &&
       state.filterTags.every(val => table.tags.includes(val))
     );

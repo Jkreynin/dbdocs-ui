@@ -1,16 +1,12 @@
 <template>
-  <div
-    v-infinite-scroll="loadMore"
-    infinite-scroll-disabled="busy"
-    infinite-scroll-distance="10"
-  >
+  <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
     <spinner v-if="spin" />
     <div class="row" v-if="!readMode">
-      <div class="col-4" v-for="table in trimmedTables">
+      <div class="col-4" :key="table.schema+table.name" v-for="table in trimmedTables">
         <table-card :table="table" />
       </div>
     </div>
-    <div v-for="table in trimmedTables" v-else>
+    <div v-for="table in trimmedTables" :key="table.schema+table.name" v-else>
       <table-doc :table="table" :listMode="true"></table-doc>
     </div>
   </div>
@@ -65,13 +61,15 @@ export default {
       setloadMoreCounter: "SET_LOAD_MORE_COUNTER"
     }),
     loadMore() {
-      this.busy = true;
+      if (this.filteredTables.length > this.initResultsAmount) {
+        this.busy = true;
 
-      setTimeout(() => {
-        let update = this.loadMoreCounter + 1;
-        this.setloadMoreCounter(update);
-        this.busy = false;
-      }, 500);
+        setTimeout(() => {
+          let update = this.loadMoreCounter + 1;
+          this.setloadMoreCounter(update);
+          this.busy = false;
+        }, 500);
+      }
     }
   }
 };

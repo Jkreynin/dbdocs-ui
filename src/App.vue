@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav class="navbar">
-      <a class="navbar-brand" href="#/">
+      <a class="navbar-brand" href="#/" @click="backToDefault">
         <i class="fas fa-database"></i>DB Docs
       </a>
       <div class="nav navbar-nav navbar-right">
@@ -20,7 +20,7 @@
 
 <script>
 import * as api from "./api.js";
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 export default {
   name: "app",
   data() {
@@ -31,6 +31,12 @@ export default {
   },
   methods: {
     ...mapActions("tables", ["loadTables", "loadTags"]),
+    ...mapMutations("tables", {
+      setReadMode: "SET_READ_MODE"
+    }),
+    backToDefault() {
+      this.setReadMode(false);
+    },
     refreshTables() {
       this.busy = true;
       api
@@ -92,6 +98,10 @@ export default {
 
 .btn-refresh:disabled {
   color: var(--main-color);
+}
+
+.navbar-brand:hover{
+  cursor: pointer;
 }
 </style>
 <style scoped>

@@ -10,14 +10,19 @@
           <h6 class="schema">{{ pageTable.schema }}</h6>
           <h3 class="card-title">
             {{ pageTable.name }}
-            <span class="badge" :class="tagsClass" v-for="tag in tags">
+            <span
+              class="badge"
+              :class="tagsClass"
+              :key="tag"
+              v-for="tag in tags"
+            >
               {{
               tag
               }}
             </span>
           </h3>
           <h5 class="card-subtitle mb-2 text-muted" :class="descClass">{{ desc }}</h5>
-          <vue-markdown :source="add_desc" class="card-text" v-if="!isInEdit"></vue-markdown>
+          <vue-markdown :source="pageTable.add_desc" class="card-text" v-if="!isInEdit"></vue-markdown>
           <textarea
             v-model="pageTable.add_desc"
             placeholder="You can use Markdown!"
@@ -49,6 +54,7 @@
           <tr v-for="column in pageTable.columns">
             <td>
               <strong :class="columnNameClass(column.name)">{{column.name}}</strong>
+              <i class="fas fa-key key" v-if="column.ispk"></i>
             </td>
             <td>{{ column.type }}</td>
             <td class="desc" v-if="!isInEdit" style="text-align:right">
@@ -61,11 +67,10 @@
         </tbody>
       </table>
     </div>
-
     <div class="card-footer text-muted" v-if="!listMode">
       <a href="#/" class="btn btn-light">
+         <i class="fas fa-arrow-left"></i>
         Back
-        <i class="fas fa-arrow-left"></i>
       </a>
     </div>
   </div>
@@ -109,11 +114,6 @@ export default {
       return this.pageTable.desc == ""
         ? "אין תיאור זמין..."
         : this.pageTable.desc;
-    },
-    add_desc() {
-      return this.pageTable.add_desc == ""
-        ? "אין פירוט נוסף..."
-        : this.pageTable.add_desc;
     },
     tags() {
       let def = ["No tags"];
@@ -211,5 +211,11 @@ table {
 
 .highlight {
   color: var(--orange);
+}
+
+.key {
+  font-size: 13px;
+  color: #ffd600;
+  margin-left: 1%;
 }
 </style>

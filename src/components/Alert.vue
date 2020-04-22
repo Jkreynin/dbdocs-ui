@@ -2,8 +2,7 @@
   <div v-if="visible">
     <div class="alert alert-dismissible fade show" role="alert">
       <i class="far" :class="icon"></i>
-      <strong>{{ coverage }}% coverage ({{ haveDocs }}/{{ total }}) -</strong>
-      {{ message }}
+      <strong>{{ coverage }}% coverage ({{ haveDocs }}/{{ total }})</strong>
       <button
         type="button"
         class="close"
@@ -40,18 +39,6 @@ export default {
   },
   computed: {
     ...mapGetters("tables", ["coverage", "total", "haveDocs"]),
-    message() {
-      switch (this.quality()) {
-        case "Bad":
-          return "The beginning is always the hardest I guess...";
-        case "Meh":
-          return "Keep up!";
-        case "Good":
-          return "Great!";
-        default:
-          return "";
-      }
-    },
     color() {
       switch (this.quality()) {
         case "Bad":

@@ -15,7 +15,7 @@
         :multiple="true"
         v-model="filterTagsData"
         :options="tags"
-        placeholder="Add tags"
+        placeholder="Filter by tags..."
       ></multiselect>
     </div>
     <div class="col-1">
