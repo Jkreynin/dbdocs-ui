@@ -1,5 +1,8 @@
 <template>
   <div class="container-sm">
+    <div class="back1"></div>
+    <div class="back2"></div>
+    <div class="back3"></div>
     <div class="logincard">
       <h2 class="title">
         <i class="fa fa-database"></i>
@@ -64,6 +67,40 @@ export default {
 </script>
 
 <style scoped>
+.back1 {
+  width: 100%;
+  height: 300px;
+  -webkit-clip-path: polygon(100% 0%, 100% 100%, 0% 0%);
+  position: fixed;
+  background: rgb(241, 241, 241);
+  left: 0;
+  top: 0;
+}
+
+.back2 {
+  width: 100%;
+  height: 400px;
+  -webkit-clip-path: polygon(0% 100%, 100% 100%, 0% 0%);
+  position: fixed;
+  background: rgb(240, 240, 240);
+  left: 0;
+  bottom: 0;
+}
+
+.back3 {
+  width: 100%;
+  height: 80px;
+  -webkit-clip-path: polygon(0% 100%, 100% 100%, 0% 0%);
+  position: fixed;
+  background: linear-gradient(
+    to right,
+    var(--secondary-main),
+    var(--main-color)
+  );
+  left: 0;
+  bottom: 0;
+}
+
 .logincard {
   margin-left: auto;
   position: relative;
