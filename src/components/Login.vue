@@ -6,33 +6,31 @@
         DB Docs
       </h2>
       <hr />
-      <form @submit="login">
-        <div class="form-group">
-          <input
-            type="text"
-            v-model="username"
-            class="rounded-input"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            placeholder="Username"
-          />
-        </div>
-        <div class="form-group">
-          <input
-            v-model="pass"
-            type="password"
-            class="rounded-input"
-            placeholder="Password"
-            id="exampleInputPassword1"
-          />
-        </div>
-        <button type="submit" class="loginbtn">Let's Go!</button>
-        <p v-if="wrong" class="wrong">
-          <center>
-            <i class="fas fa-exclamation-triangle"></i> Oops... wrong username or password
-          </center>
-        </p>
-      </form>
+      <div class="form-group">
+        <input
+          type="text"
+          v-model="username"
+          class="rounded-input"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          placeholder="Username"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          v-model="pass"
+          type="password"
+          class="rounded-input"
+          placeholder="Password"
+          id="exampleInputPassword1"
+        />
+      </div>
+      <button class="loginbtn" @click="login">Let's Go!</button>
+      <p v-if="wrong" class="wrong">
+        <center>
+          <i class="fas fa-exclamation-triangle"></i> Oops... wrong username or password
+        </center>
+      </p>
     </div>
   </div>
 </template>
@@ -80,6 +78,7 @@ export default {
 }
 
 .fa-database {
+  display: inline-table;
   font-size: 28px;
   color: var(--secondary-main);
   /* display: block; */
@@ -142,5 +141,6 @@ input:focus {
 .wrong {
   margin-top: 2%;
   color: var(--danger);
+  margin-bottom: 1%;
 }
 </style>
