@@ -4,7 +4,11 @@
     :class="{ cardInEdit: isInEdit }"
     v-if="Object.keys(this.pageTable).length != 0"
   >
-    <div class="card-body">
+    <div class="card-body" v-if="loading">
+      <spinner class="spinner" />
+    </div>
+
+    <div class="card-body" v-else>
       <div class="d-flex justify-content-between">
         <div class="header">
           <h6 class="schema">{{ pageTable.schema }}</h6>
@@ -42,34 +46,40 @@
         </button>
       </div>
 
-      <table class="table table-sm table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">Column name</th>
-            <th scope="col">Type</th>
-            <th scope="col" style="text-align:center">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="column in pageTable.columns">
-            <td>
-              <strong :class="columnNameClass(column.name)">{{column.name}}</strong>
-              <i class="fas fa-key key" v-if="column.ispk"></i>
-            </td>
-            <td>{{ column.type }}</td>
-            <td class="desc" v-if="!isInEdit" style="text-align:right">
-              <p>{{column.desc}}</p>
-            </td>
-            <td v-else>
-              <textarea v-model="column.desc" class="form-control" rows="2"></textarea>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <h6 class="sectionHeader" @click="showColumns = !showColumns">
+        <i class="fas toggleSecion" :class="showColumns ? 'fa-caret-down' : 'fa-caret-right'"></i>
+        Columns
+      </h6>
+      <transition name="table">
+        <table class="table table-sm table-bordered" v-show="showColumns">
+          <thead>
+            <tr>
+              <th scope="col">Column name</th>
+              <th scope="col">Type</th>
+              <th scope="col" style="text-align:center">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="column in pageTable.columns">
+              <td>
+                <strong :class="columnNameClass(column.name)">{{column.name}}</strong>
+                <i class="fas fa-key key" v-if="column.ispk"></i>
+              </td>
+              <td>{{ column.type }}</td>
+              <td class="desc" v-if="!isInEdit" style="text-align:right">
+                <p>{{column.desc}}</p>
+              </td>
+              <td v-else>
+                <textarea v-model="column.desc" class="form-control" rows="2"></textarea>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </transition>
     </div>
-    <div class="card-footer text-muted" v-if="!listMode">
+    <div class="card-footer text-muted" v-if="!listMode && !loading">
       <a href="#/" class="btn btn-light">
-         <i class="fas fa-arrow-left"></i>
+        <i class="fas fa-arrow-left"></i>
         Back
       </a>
     </div>
@@ -79,16 +89,20 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import VueMarkdown from "vue-markdown";
+import Spinner from "./Spinner.vue";
 export default {
   name: "TableDoc",
   data() {
     return {
       isInEdit: false,
-      busy: false
+      busy: false,
+      loading: false,
+      showColumns: true
     };
   },
   components: {
-    VueMarkdown
+    VueMarkdown,
+    Spinner
   },
   props: {
     listMode: { type: Boolean, default: false },
@@ -98,10 +112,13 @@ export default {
   },
   async created() {
     if (!this.listMode) {
+      this.loading = true;
       try {
         await this.loadSingleTable({ name: this.name, schema: this.schema });
+        this.loading = false;
       } catch (error) {
         this.$toasted.show("Could not load table data");
+        this.loading = false;
       }
     }
   },
@@ -164,7 +181,11 @@ export default {
       }
     },
     columnNameClass(columnName) {
-      if (this.filterText != "" && columnName.includes(this.filterText)) {
+      if (
+        this.listMode &&
+        this.filterText != "" &&
+        columnName.includes(this.filterText)
+      ) {
         return "highlight";
       } else {
         return "";
@@ -217,5 +238,33 @@ table {
   font-size: 13px;
   color: #ffd600;
   margin-left: 1%;
+}
+
+.spinner {
+  margin: auto;
+}
+
+.sectionHeader {
+  color: rgba(0, 0, 0, 0.4);
+  transition: 0.4s;
+}
+
+.sectionHeader:hover {
+  color: rgb(68, 68, 68);
+  cursor: pointer;
+}
+
+.table-enter,
+.table-leave-to {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+.table-enter-active,
+.table-leave-active {
+  transition: all 0.3s;
 }
 </style>

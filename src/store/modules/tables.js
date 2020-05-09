@@ -9,23 +9,28 @@ const state = {
   tables: [],
   tags: [],
   loadMoreCounter: 0,
-  alert: ""
+  alert: "",
+  undocFilterActive: false
 }
 
 const getters = {
 
   filteredTables(state) {
     let currFilter = state.filterText.toLowerCase();
-    return state.tables.filter(table =>
+    let filterResult = state.tables.filter(table =>
       (table.name.toLowerCase().includes(currFilter) ||
         table.desc.toLowerCase().includes(currFilter) ||
         (state.readMode &&
           table.columns
             .map(column => column.name.toLowerCase())
             .filter(name => name.includes(currFilter)).length > 0)) &&
-      state.filterTags.every(val => table.tags.includes(val))
-    );
+      state.filterTags.every(val => table.tags.includes(val)))
 
+    if (state.undocFilterActive) {
+      return filterResult.filter(table => table.desc == "" || table.tags.length == 0);
+    }
+
+    return filterResult;
   },
 
   tableByID: state => (name, schema) => {
@@ -39,7 +44,7 @@ const getters = {
   },
   coverage: (state, getters) => {
     let fixedTotal = (!getters.total) ? 1 : getters.total;
-    return Math.round((Math.round(getters.haveDocs) * 100) / Math.round(fixedTotal))
+    return ((Math.round(getters.haveDocs) * 100) / Math.round(fixedTotal)).toFixed(1);
   },
   initResultsAmount(state) {
     return state.readMode ? 3 : 18
@@ -62,7 +67,7 @@ const actions = {
     let result = await api.getTable(data.schema, data.name)
     commit('SET_CURR_TABLE', result.data)
   },
-  async updateTable({commit},data){
+  async updateTable({ commit }, data) {
     await api.updateTable(data.table)
     commit('SET_TABLE', data.table)
   }
@@ -89,6 +94,9 @@ const mutations = {
   },
   SET_CURR_TABLE(state, currTable) {
     state.currTable = currTable
+  },
+  SET_UNDOC_FILTER(state, undocFilterActive) {
+    state.undocFilterActive = undocFilterActive
   },
   SET_TABLE(state, currTable) {
     let tableIndex = state.tables.findIndex((table => table.name == currTable.name));

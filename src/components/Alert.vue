@@ -3,6 +3,11 @@
     <div class="alert alert-dismissible fade show" role="alert">
       <i class="far" :class="icon"></i>
       <strong>{{ coverage }}% coverage ({{ haveDocs }}/{{ total }})</strong>
+      <a
+        class="btn btn-light btn-sm"
+        @click="setUndocFilter(!undocFilterActive)"
+        v-html="actionText"
+      ></a>
       <button
         type="button"
         class="close"
@@ -29,7 +34,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState, mapMutations } from "vuex";
 export default {
   name: "Alert",
   data() {
@@ -38,6 +43,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("tables", ["undocFilterActive"]),
     ...mapGetters("tables", ["coverage", "total", "haveDocs"]),
     color() {
       switch (this.quality()) {
@@ -62,9 +68,18 @@ export default {
         default:
           return "";
       }
+    },
+    actionText() {
+      if (this.undocFilterActive) {
+        return "Show <b>all tables</b>";
+      }
+      return "Show tables with <b>no docs</b>";
     }
   },
   methods: {
+    ...mapMutations("tables", {
+      setUndocFilter: "SET_UNDOC_FILTER"
+    }),
     quality() {
       if (this.coverage >= 80) {
         return "Good";
@@ -90,8 +105,13 @@ export default {
   border-left: 1px solid #f1f1f1;
   border-right: 1px solid #f1f1f1;
 }
+
 i {
   margin-right: 5px;
   font-size: 19px;
+}
+
+.btn {
+  margin-left: 1%;
 }
 </style>

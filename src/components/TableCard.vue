@@ -11,36 +11,41 @@
               params: { name: this.table.name, schema: this.table.schema }
             }"
           >
-            <h5 class="tableName" :style="{ fontSize: fontSize + 'px' }">
-              {{ table.name }}
-            </h5>
+            <h5 class="tableName" :style="{ fontSize: fontSize + 'px' }">{{ table.name }}</h5>
           </router-link>
         </div>
 
         <button
           type="button"
-          class="btn btn-circle"
-          @click="editOrSave"
-          :class="isInEdit ? 'btn-primary' : 'btn-light'"
+          class="btn btn-circle btn-light"
+          @click="isInEdit = true"
+          v-if="!isInEdit"
         >
-          <i class="fas" :class="buttonIconClass"></i>
+          <i class="fas fa-pen"></i>
         </button>
       </div>
       <p class="card-text" :class="descClass" v-if="!isInEdit">{{ desc }}</p>
-      <input class="form-control" v-model="mutableDesc" v-else>
+      <input class="form-control" v-model="mutableDesc" v-else />
       <div v-if="!isInEdit" class="tags">
-        <span class="badge" :class="tagsClass" v-for="tag in tags">{{
+        <span class="badge" :class="tagsClass" v-for="tag in tags">
+          {{
           tag
-        }}</span>
+          }}
+        </span>
       </div>
       <multiselect
         v-else
         id="multiple"
+        class="tagsSelect"
         :multiple="true"
         v-model="mutableTags"
         :options="options"
         placeholder="Add tags"
       ></multiselect>
+      <button type="button" class="btn btn-primary btn-sm save-btn" v-if="isInEdit" @click="save">
+        <i class="fas" :class="busy? 'fa-spinner fa-pulse' : 'fa-save'"></i>
+        Save
+      </button>
     </div>
   </div>
 </template>
@@ -80,39 +85,24 @@ export default {
     },
     tagsClass() {
       return this.table.tags.length == 0 ? "noTags" : "";
-    },
-    buttonIconClass() {
-      if (this.isInEdit) {
-        if (this.busy) {
-          return "fa-spinner fa-spin";
-        } else {
-          return "fa-save";
-        }
-      } else {
-        return "fa-pen";
-      }
     }
   },
   methods: {
     ...mapActions("tables", ["updateTable"]),
-    async editOrSave() {
-      if (this.isInEdit) {
-        let newTable = Object.assign({}, this.table);
-        newTable.desc = this.mutableDesc;
-        newTable.tags = this.mutableTags;
-        try {
-          this.busy = true;
-          await this.updateTable({ table: newTable });
-        } catch (error) {
-          this.$toasted.show("Could not save changes");
-          this.mutableDesc = this.table.desc;
-          this.mutableTags = this.table.tags;
-        }
-        this.busy = false;
-        this.isInEdit = false;
-      } else {
-        this.isInEdit = true;
+    async save() {
+      let newTable = Object.assign({}, this.table);
+      newTable.desc = this.mutableDesc;
+      newTable.tags = this.mutableTags;
+      try {
+        this.busy = true;
+        await this.updateTable({ table: newTable });
+      } catch (error) {
+        this.$toasted.show("Could not save changes");
+        this.mutableDesc = this.table.desc;
+        this.mutableTags = this.table.tags;
       }
+      this.busy = false;
+      this.isInEdit = false;
     }
   }
 };
@@ -148,5 +138,14 @@ input {
   min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.tagsSelect {
+  margin-bottom: 3%;
+}
+
+.save-btn {
+  width: 80px;
+  min-width: 80px;
 }
 </style>
