@@ -51,9 +51,11 @@ export default {
 <style>
 .credit {
   position: fixed;
+  z-index: -1;
   bottom: 0;
   left: 0;
-  padding-left: 5px;
+  margin: 0;
+  padding-left: 10px;
   color: #ccc;
   font-size: 12px;
 }

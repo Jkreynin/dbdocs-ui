@@ -63,7 +63,15 @@
             <tr v-for="column in pageTable.columns">
               <td>
                 <strong :class="columnNameClass(column.name)">{{column.name}}</strong>
-                <i class="fas fa-key key" v-if="column.ispk"></i>
+                <span v-if="column.constraint_types">
+                  <i
+                    class="key fas"
+                    :title="type"
+                    v-for="type in column.constraint_types"
+                    :key="type"
+                    :class="keyClass(type)"
+                  ></i>
+                </span>
               </td>
               <td>{{ column.type }}</td>
               <td class="desc" v-if="!isInEdit" style="text-align:right">
@@ -190,6 +198,18 @@ export default {
       } else {
         return "";
       }
+    },
+    keyClass(constraint_type) {
+      switch (constraint_type) {
+        case "PRIMARY KEY":
+          return "pk fa-key";
+        case "UNIQUE":
+          return "unique fa-fingerprint";
+        case "FOREIGN KEY":
+          return "fk fa-key";
+        default:
+          return "";
+      }
     }
   }
 };
@@ -232,6 +252,27 @@ table {
 
 .highlight {
   color: var(--orange);
+}
+
+.key {
+  font-size: 13px;
+  margin-left: 1%;
+}
+
+.key:hover {
+  cursor: help;
+}
+
+.pk {
+  color: #ffd600 !important;
+}
+
+.fk {
+  color: var(--info) !important;
+}
+
+.unique {
+  color: var(--success) !important;
 }
 
 .key {

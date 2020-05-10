@@ -1,13 +1,27 @@
 import VueRouter from "vue-router";
 import Home from "./components/Home";
 import TableDoc from "./components/TableDoc";
+import TableFeed from "./components/TableFeed";
 import Login from "./components/Login";
 
 let routes = [
   {
     path: "/",
     component: Home,
-    name: "home"
+    name: "home",
+    children: [
+      {
+        path: "",
+        component: TableFeed,
+        name: "tablefeed"
+      },
+      {
+        path: "/table/:schema/:name",
+        component: TableDoc,
+        props: true,
+        name: "table"
+      }
+    ]
   },
   {
     path: "/login",
@@ -17,12 +31,6 @@ let routes = [
       if (!localStorage.getItem('user')) next()
       else next({ name: 'home' });
     }
-  },
-  {
-    path: "/table/:schema/:name",
-    component: TableDoc,
-    props: true,
-    name: "table"
   }
 ];
 

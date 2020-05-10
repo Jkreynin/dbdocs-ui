@@ -44,7 +44,7 @@ const getters = {
   },
   coverage: (state, getters) => {
     let fixedTotal = (!getters.total) ? 1 : getters.total;
-    return ((Math.round(getters.haveDocs) * 100) / Math.round(fixedTotal)).toFixed(1);
+    return parseFloat(((Math.round(getters.haveDocs) * 100) / Math.round(fixedTotal)).toFixed(1));
   },
   initResultsAmount(state) {
     return state.readMode ? 3 : 18

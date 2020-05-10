@@ -16,27 +16,18 @@
       </div>
     </nav>
     <div class="container" :key="componentKey">
-      <Alert />
-      <Filters />
-      <Tables />
+      <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
-import Filters from "./Filters.vue";
-import Tables from "./Tables.vue";
-import Alert from "./Alert.vue";
 import * as api from "../api.js";
 import { mapActions, mapMutations } from "vuex";
 
 export default {
   name: "Home",
-  components: {
-    Filters,
-    Tables,
-    Alert
-  },
+  components: {},
   data() {
     return {
       componentKey: 0,
@@ -60,7 +51,7 @@ export default {
           this.loadTags();
           this.componentKey += 1;
           this.busy = false;
-          this.$toasted.show("Refreshed Successfully!", {
+          this.$toasted.show("Synchronized Successfully!", {
             icon: "fa-check",
             className: "customSuccessToast"
           });
