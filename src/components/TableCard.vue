@@ -11,7 +11,7 @@
               params: { name: this.table.name, schema: this.table.schema }
             }"
           >
-            <h5 class="tableName" :style="{ fontSize: fontSize + 'px' }">{{ table.name }}</h5>
+            <h5 class="tableName" :title="table.name">{{ table.name }}</h5>
           </router-link>
         </div>
 
@@ -67,13 +67,6 @@ export default {
     table: Object
   },
   computed: {
-    fontSize() {
-      if (this.table.name.length > 20) {
-        return 15;
-      } else {
-        return 19;
-      }
-    },
     desc() {
       return this.table.desc == "" ? "אין תיאור זמין..." : this.mutableDesc;
     },
@@ -138,6 +131,7 @@ input {
   min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-size: 18px;
 }
 
 .tagsSelect {
