@@ -8,6 +8,9 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Multiselect from "vue-multiselect";
 import infiniteScroll from "vue-infinite-scroll";
 import Toasted from "vue-toasted";
+import VModal from 'vue-js-modal';
+
+Vue.use(VModal, { dialog: true })
 
 Vue.use(Toasted, {
   iconPack: "fontawesome",

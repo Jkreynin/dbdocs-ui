@@ -68,7 +68,7 @@ export default {
           let update = this.loadMoreCounter + 1;
           this.setloadMoreCounter(update);
           this.busy = false;
-        }, 500);
+        }, 200);
       }
     }
   }

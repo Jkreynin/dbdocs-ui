@@ -71,9 +71,9 @@ export default {
     },
     actionText() {
       if (this.undocFilterActive) {
-        return "Show <b>all tables</b>";
+        return 'Show <b style="color:var(--primary)">all tables</b>';
       }
-      return "Show tables with <b>no docs</b>";
+      return 'Show tables with <b style="color:var(--danger)">no docs</b>';
     }
   },
   methods: {

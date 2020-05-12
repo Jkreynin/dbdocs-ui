@@ -15,6 +15,7 @@
     "core-js": "^2.6.5",
     "vue": "^2.6.10",
     "vue-infinite-scroll": "^2.0.2",
+    "vue-js-modal": "^2.0.0-rc.3",
     "vue-markdown": "^2.2.4",
     "vue-multiselect": "^2.1.6",
     "vue-router": "^3.0.3",

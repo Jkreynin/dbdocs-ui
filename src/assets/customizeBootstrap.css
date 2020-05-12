@@ -3,7 +3,9 @@
     min-width: 30px !important;
     height: 30px !important;
     padding: 6px 0px !important;
-    position: relative;
+    position: absolute;
+    right: 10px;
+    top: 10px;
     border-radius: 15px !important;
     text-align: center !important;
     font-size: 12px !important;

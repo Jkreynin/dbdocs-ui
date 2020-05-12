@@ -1,6 +1,8 @@
 <template>
   <div
     class="card"
+    @cancel="cancel"
+    :key="componentKey"
     :class="{ cardInEdit: isInEdit }"
     v-if="Object.keys(this.pageTable).length != 0"
   >
@@ -25,17 +27,16 @@
               }}
             </span>
           </h3>
-          <h5 class="card-subtitle mb-2 text-muted" :class="descClass">{{ desc }}</h5>
+          <h5 class="card-subtitle mb-2 text-muted" :class="descClass">{{ pageTable.desc }}</h5>
           <vue-markdown :source="pageTable.add_desc" class="card-text" v-if="!isInEdit"></vue-markdown>
           <textarea
             v-model="pageTable.add_desc"
-            placeholder="You can use Markdown!"
+            placeholder="Additional description (you can use Markdown!)"
             class="form-control"
             rows="2"
             v-else
           ></textarea>
         </div>
-        <!-- v-if="!listMode" -->
         <button
           type="button"
           class="btn btn-circle"
@@ -43,6 +44,9 @@
           :class="isInEdit ? 'btn-primary' : 'btn-light'"
         >
           <i class="fas" :class="buttonIconClass"></i>
+        </button>
+        <button type="button" v-if="isInEdit" class="btn btn-circle cancel" @click="showModal">
+          <i class="fas fa-times"></i>
         </button>
       </div>
 
@@ -60,7 +64,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="column in pageTable.columns">
+            <tr v-for="column in pageTable.columns" :key="column.name">
               <td>
                 <strong :class="columnNameClass(column.name)">{{column.name}}</strong>
                 <span v-if="column.constraint_types">
@@ -98,6 +102,7 @@
 import { mapActions, mapState } from "vuex";
 import VueMarkdown from "vue-markdown";
 import Spinner from "./Spinner.vue";
+import { EventBus } from "../eventbus";
 export default {
   name: "TableDoc",
   data() {
@@ -105,7 +110,10 @@ export default {
       isInEdit: false,
       busy: false,
       loading: false,
-      showColumns: true
+      showColumns: true,
+      componentKey: 0,
+      pageTable: {},
+      initPageTable: {}
     };
   },
   components: {
@@ -124,22 +132,31 @@ export default {
       try {
         await this.loadSingleTable({ name: this.name, schema: this.schema });
         this.loading = false;
+        this.pageTable = this.currTable;
       } catch (error) {
         this.$toasted.show("Could not load table data");
         this.loading = false;
       }
+    } else {
+      this.pageTable = this.table;
     }
+
+    // Used JSON.stringify instead of Object.assign to deep copy nested values as well!
+    this.initPageTable = JSON.parse(JSON.stringify(this.pageTable));
+  },
+  mounted() {
+    EventBus.$on("cancel", tableData => {
+      if (
+        this.pageTable.name == tableData.name &&
+        this.pageTable.schema == tableData.schema &&
+        this.isInEdit
+      ) {
+        this.cancel();
+      }
+    });
   },
   computed: {
     ...mapState("tables", ["currTable", "filterText"]),
-    pageTable() {
-      return this.listMode ? this.table : this.currTable;
-    },
-    desc() {
-      return this.pageTable.desc == ""
-        ? "אין תיאור זמין..."
-        : this.pageTable.desc;
-    },
     tags() {
       let def = ["No tags"];
       try {
@@ -176,10 +193,12 @@ export default {
     async editOrSave() {
       if (this.isInEdit) {
         let newTable = Object.assign({}, this.pageTable);
+        this.initPageTable = JSON.parse(JSON.stringify(this.pageTable));
         try {
           this.busy = true;
           await this.updateTable({ table: newTable });
         } catch (error) {
+          this.reset();
           this.$toasted.show("Could not save changes");
         }
         this.busy = false;
@@ -187,6 +206,20 @@ export default {
       } else {
         this.isInEdit = true;
       }
+    },
+    showModal() {
+      EventBus.$emit("show-modal", {
+        name: this.pageTable.name,
+        schema: this.pageTable.schema
+      });
+    },
+    reset() {
+      this.pageTable = JSON.parse(JSON.stringify(this.initPageTable));
+    },
+    cancel() {
+      this.isInEdit = false;
+      this.reset();
+      this.$modal.hide("dialog");
     },
     columnNameClass(columnName) {
       if (
@@ -217,6 +250,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.btn-circle {
+  font-size: 16px !important;
+  width: 35px !important;
+  min-width: 35px !important;
+  height: 35px !important;
+  border-radius: 20px !important;
+}
+
+.cancel {
+  right: 52px !important;
+}
 .card {
   margin-bottom: 3%;
 }

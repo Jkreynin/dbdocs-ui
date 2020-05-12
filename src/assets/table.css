@@ -31,3 +31,14 @@ textarea {
 .schema {
     color: rgb(177, 177, 177);
 }
+
+.cancel:focus,
+.cancel:hover {
+    background-color: rgb(206, 206, 206) !important;
+}
+
+.cancel {
+    right: 55px !important;
+    background-color: rgb(240, 240, 240) !important;
+    color: rgb(99, 99, 99) !important;
+}

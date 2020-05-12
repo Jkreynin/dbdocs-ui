@@ -18,13 +18,14 @@
     <div class="container" :key="componentKey">
       <router-view></router-view>
     </div>
+    <v-dialog />
   </div>
 </template>
 
 <script>
 import * as api from "../api.js";
 import { mapActions, mapMutations } from "vuex";
-
+import { EventBus } from "../eventbus";
 export default {
   name: "Home",
   components: {},
@@ -33,6 +34,9 @@ export default {
       componentKey: 0,
       busy: false
     };
+  },
+  mounted() {
+    EventBus.$on("show-modal", payload => this.show(payload));
   },
   methods: {
     ...mapActions("tables", ["loadTables", "loadTags"]),
@@ -60,6 +64,27 @@ export default {
           this.$toasted.show("Could not synchronize tables");
           this.busy = false;
         });
+    },
+    show(payload) {
+      this.$modal.show("dialog", {
+        title: "Wait a minute...",
+        text: "Are you sure you want to revert your changes?",
+        styles: ["box-shadow: none!important;"],
+        buttons: [
+          {
+            title: "Revert",
+            handler: () => {
+              EventBus.$emit("cancel", {
+                name: payload.name,
+                schema: payload.schema
+              });
+            }
+          },
+          {
+            title: "Cancel"
+          }
+        ]
+      });
     }
   }
 };
