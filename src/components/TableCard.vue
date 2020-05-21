@@ -1,56 +1,35 @@
 <template>
-  <div class="card h-100" :class="{ cardInEdit: isInEdit }">
-    <div class="card-body">
-      <div class="d-flex justify-content-between" style="  flex-wrap: wrap;">
-        <div class="tableDetails">
-          <h6 class="schema">{{ table.schema }}</h6>
-          <router-link
-            class="link"
-            :to="{
+  <router-link
+    class="link"
+    :to="{
               name: 'table',
               params: { name: this.table.name, schema: this.table.schema }
             }"
-          >
+  >
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between" style="  flex-wrap: wrap;">
+          <div class="tableDetails">
             <h5 class="tableName" :title="table.name">{{ table.name }}</h5>
-          </router-link>
+          </div>
         </div>
-
-        <button
-          type="button"
-          class="btn btn-circle btn-light"
-          @click="isInEdit = true"
-          v-if="!isInEdit"
-        >
-          <i class="fas fa-pen"></i>
-        </button>
-      </div>
-      <p class="card-text" :class="descClass" v-if="!isInEdit">{{ mutableDesc }}</p>
-      <input class="form-control" placeholder="Short description" v-model="mutableDesc" v-else />
-      <div v-if="!isInEdit" class="tags">
-        <span class="badge" :class="tagsClass" v-for="tag in tags">
-          {{
-          tag
-          }}
-        </span>
-      </div>
-      <multiselect
-        v-else
-        id="multiple"
-        class="tagsSelect"
-        :multiple="true"
-        v-model="mutableTags"
-        :options="options"
-        placeholder="Add tags"
-      ></multiselect>
-      <div class="button-box">
-        <button type="button" class="btn btn-primary btn-sm" v-if="isInEdit" @click="save">
-          <i class="fas" :class="busy? 'fa-spinner fa-pulse' : 'fa-save'"></i>
-          Save
-        </button>
-        <button type="button" class="btn cancel btn-sm" v-if="isInEdit" @click="cancel">Cancel</button>
+        <p class="card-text">{{ mutableDesc }}</p>
+        <!-- <input class="form-control" placeholder="Short description" v-model="mutableDesc" v-else /> -->
+        <div class="tags">
+          <span class="badge" :class="tagsClass" v-for="tag in tags">{{tag}}</span>
+        </div>
+        <!-- <multiselect
+          v-else
+          id="multiple"
+          class="tagsSelect"
+          :multiple="true"
+          v-model="mutableTags"
+          :options="options"
+          placeholder="Add tags"
+        ></multiselect>-->
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
@@ -59,11 +38,11 @@ export default {
   name: "TableCard",
   data() {
     return {
-      isInEdit: false,
-      mutableDesc: this.table.desc,
-      mutableTags: this.table.tags,
-      options: ["Read", "Write", "TBManager"],
-      busy: false
+      // isInEdit: false,
+      // mutableDesc: this.table.desc,
+      // mutableTags: this.table.tags,
+      // options: ["Read", "Write", "TBManager"],
+      // busy: false
     };
   },
   props: {
@@ -73,38 +52,35 @@ export default {
     tags() {
       return this.table.tags.length == 0 ? ["No tags"] : this.table.tags;
     },
-    descClass() {
-      return this.table.desc == "" ? "noDesc" : "";
-    },
     tagsClass() {
       return this.table.tags.length == 0 ? "noTags" : "";
     }
-  },
-  methods: {
-    ...mapActions("tables", ["updateTable"]),
-    async save() {
-      let newTable = Object.assign({}, this.table);
-      newTable.desc = this.mutableDesc;
-      newTable.tags = this.mutableTags;
-      try {
-        this.busy = true;
-        await this.updateTable({ table: newTable });
-      } catch (error) {
-        this.reset();
-        this.$toasted.show("Could not save changes");
-      }
-      this.busy = false;
-      this.isInEdit = false;
-    },
-    cancel() {
-      this.isInEdit = false;
-      this.reset();
-    },
-    reset() {
-      this.mutableDesc = this.table.desc;
-      this.mutableTags = this.table.tags;
-    }
   }
+  // methods: {
+  //   ...mapActions("tables", ["updateTable"]),
+  //   async save() {
+  //     let newTable = Object.assign({}, this.table);
+  //     newTable.desc = this.mutableDesc;
+  //     newTable.tags = this.mutableTags;
+  //     try {
+  //       this.busy = true;
+  //       await this.updateTable({ table: newTable });
+  //     } catch (error) {
+  //       this.reset();
+  //       this.$toasted.show("Could not save changes");
+  //     }
+  //     this.busy = false;
+  //     this.isInEdit = false;
+  //   },
+  //   cancel() {
+  //     this.isInEdit = false;
+  //     this.reset();
+  //   },
+  //   reset() {
+  //     this.mutableDesc = this.table.desc;
+  //     this.mutableTags = this.table.tags;
+  //   }
+  // }
 };
 </script>
 
@@ -119,13 +95,14 @@ input {
   text-decoration: none;
 }
 
-.link h5:hover {
+/* .link h5:hover {
   cursor: pointer;
   font-weight: 600;
   color: #404040;
-}
+} */
 
 .card:hover {
+  cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
