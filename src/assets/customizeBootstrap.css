@@ -72,7 +72,7 @@ input.form-control:focus {
     color: #adadad !important;
 }
 
-.container {
+.container, .container-fluid {
     margin-top: 1%;
 }
 

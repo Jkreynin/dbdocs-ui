@@ -8,7 +8,7 @@
         <div class="btn-nav">
           <!-- <button type="button" class="action-btn">
             <i class="fas fa-cog"></i>
-          </button>-->
+          </button> -->
           <button type="button" :disabled="busy" class="action-btn" @click="refreshTables">
             <i class="fas fa-sync" :class="{ 'fa-spin': busy }"></i>
           </button>
@@ -50,12 +50,14 @@ export default {
       this.busy = true;
       api
         .refresh()
-        .then(() => {
+        .then(result => {
           this.loadTables();
           this.loadTags();
           this.componentKey += 1;
           this.busy = false;
-          this.$toasted.show("Synchronized Successfully!", {
+
+          let message = this.calculatedNumbers(result.data);
+          this.$toasted.show(`Synchronized Successfully! ${message}`, {
             icon: "fa-check",
             className: "customSuccessToast"
           });
@@ -64,6 +66,24 @@ export default {
           this.$toasted.show("Could not synchronize tables");
           this.busy = false;
         });
+    },
+    calculatedNumbers(data) {
+      let message = "";
+      if (data.tables != 0) {
+        message += `${this.parseNumber(data.tables)} Tables `;
+      }
+
+      if (data.columns != 0) {
+        message += `${this.parseNumber(data.columns)} Columns `;
+      }
+
+      if (message == "") {
+        message = "No changes";
+      }
+      return message;
+    },
+    parseNumber(number) {
+      return number > 0 ? `+${number}` : number;
     },
     show(payload) {
       this.$modal.show("dialog", {
@@ -76,7 +96,8 @@ export default {
             handler: () => {
               EventBus.$emit("cancel", {
                 name: payload.name,
-                schema: payload.schema
+                schema: payload.schema,
+                action: payload.action
               });
             }
           },

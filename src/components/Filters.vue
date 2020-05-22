@@ -1,41 +1,58 @@
 <template>
-  <div class="row filters">
-    <div class="col-5">
-      <input
-        id="search"
-        v-model="filterTextData"
-        class="form-control"
-        type="text"
-        placeholder="Search..."
-      />
+  <div>
+    <div class="row filters">
+      <div class="col-5">
+        <input
+          id="search"
+          v-model="filterTextData"
+          class="form-control"
+          type="text"
+          placeholder="Search..."
+        />
+      </div>
+      <div class="col-6">
+        <multiselect
+          id="multiple"
+          :multiple="true"
+          v-model="filterTagsData"
+          :options="tags"
+          placeholder="Filter by tags..."
+        ></multiselect>
+      </div>
+      <div class="col-1">
+        <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Basic example">
+          <button
+            type="button"
+            @click="toggleReadMode"
+            class="btn"
+            :class="readMode ? 'btn-disabled' : 'btn-enabled'"
+          >
+            <i class="fas fa-th"></i>
+          </button>
+          <button
+            type="button"
+            @click="toggleReadMode"
+            class="btn"
+            :class="readMode ? 'btn-enabled' : 'btn-disabled'"
+          >
+            <i class="fas fa-book"></i>
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="col-6">
-      <multiselect
-        id="multiple"
-        :multiple="true"
-        v-model="filterTagsData"
-        :options="tags"
-        placeholder="Filter by tags..."
-      ></multiselect>
-    </div>
-    <div class="col-1">
-      <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Basic example">
-        <button
-          type="button"
-          @click="toggleReadMode"
-          class="btn"
-          :class="readMode ? 'btn-disabled' : 'btn-enabled'"
-        >
-          <i class="fas fa-th"></i>
-        </button>
-        <button
-          type="button"
-          @click="toggleReadMode"
-          class="btn"
-          :class="readMode ? 'btn-enabled' : 'btn-disabled'"
-        >
-          <i class="fas fa-book"></i>
-        </button>
+
+    <div class="row filters">
+      <div class="col-5">
+        <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Basic example">
+          <button
+            type="button"
+            :key="schema.name"
+            @click="toggleSchema(schema)"
+            v-for="schema in schemas"
+            class="btn"
+            :class="schema.active ? 'btn-enabled' : 'btn-disabled'"
+          >{{schema.name}}</button>
+        </div>
       </div>
     </div>
   </div>
@@ -54,9 +71,21 @@ export default {
     } catch (error) {
       this.$toasted.show("Could not load tags");
     }
+
+    try {
+      await this.loadSchemas();
+    } catch (error) {
+      this.$toasted.show("Could not load schemas");
+    }
   },
   computed: {
-    ...mapState("tables", ["filterText", "filterTags", "readMode", "tags"]),
+    ...mapState("tables", [
+      "filterText",
+      "filterTags",
+      "readMode",
+      "tags",
+      "schemas"
+    ]),
     filterTextData: {
       get() {
         return this.filterText;
@@ -75,16 +104,21 @@ export default {
     }
   },
   methods: {
-    ...mapActions("tables", ["loadTags"]),
+    ...mapActions("tables", ["loadTags", "loadSchemas"]),
     ...mapMutations("tables", {
       setFilterText: "SET_FILTER_TEXT",
       setFilterTags: "SET_FILTER_TAGS",
       setReadMode: "SET_READ_MODE",
-      setLoadMoreCounter: "SET_LOAD_MORE_COUNTER"
+      setLoadMoreCounter: "SET_LOAD_MORE_COUNTER",
+      setSchema: "SET_SCHEMA"
     }),
     toggleReadMode() {
       this.setReadMode(!this.readMode);
       this.setLoadMoreCounter(0);
+    },
+    toggleSchema(currSchema) {
+      currSchema.active = !currSchema.active;
+      this.setSchema(currSchema);
     }
   }
 };
@@ -104,7 +138,7 @@ export default {
 }
 
 #search:focus {
-  border: 1px solid #e8e8e8!important;
+  border: 1px solid #e8e8e8 !important;
 }
 
 .multiselect__placeholder {
@@ -133,13 +167,19 @@ export default {
 }
 
 .btn-enabled,
-.btn-disabled:focus,
 .btn-disabled:hover {
   background-color: rgb(206, 206, 206) !important;
 }
 
 .btn-enabled {
   color: var(--primary) !important;
+  font-weight: bold !important;
+}
+
+.btn-primary-enabled {
+  background-color: var(--primary) !important;
+  color: white !important;
+  font-weight: bold !important;
 }
 
 .btn-disabled:focus,

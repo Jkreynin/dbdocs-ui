@@ -8,6 +8,7 @@ const state = {
   currTable: {},
   tables: [],
   tags: [],
+  schemas: [],
   loadMoreCounter: 0,
   alert: "",
   undocFilterActive: false
@@ -16,8 +17,14 @@ const state = {
 const getters = {
 
   filteredTables(state) {
+    let tablesBySchema = state.tables.filter(table =>
+      state.schemas.filter(schema => schema.active)
+        .map(schema => schema.name).includes(table.schema)
+    )
+
     let currFilter = state.filterText.toLowerCase();
-    let filterResult = state.tables.filter(table =>
+
+    let filterResult = tablesBySchema.filter(table =>
       (table.name.toLowerCase().includes(currFilter) ||
         table.desc.toLowerCase().includes(currFilter) ||
         (state.readMode &&
@@ -63,6 +70,10 @@ const actions = {
     let result = await api.getTags()
     commit('SET_TAGS', result.data)
   },
+  async loadSchemas({ commit }) {
+    let result = await api.getSchemas()
+    commit('SET_SCHEMAS', result.data)
+  },
   async loadSingleTable({ commit }, data) {
     let result = await api.getTable(data.schema, data.name)
     commit('SET_CURR_TABLE', result.data)
@@ -82,6 +93,17 @@ const mutations = {
   },
   SET_TAGS(state, tags) {
     state.tags = tags
+  },
+  SET_SCHEMAS(state, initSchemas) {
+    if (state.schemas.length == 0) {
+      initSchemas.forEach(element => {
+        state.schemas.push({ name: element.name, active: element.default ? true : false })
+      });
+    }
+  },
+  SET_SCHEMA(state, currSchema) {
+    let schemaIndex = state.schemas.findIndex((schema => schema.name == currSchema.name));
+    Vue.set(state.schemas, schemaIndex, currSchema);
   },
   SET_FILTER_TEXT(state, filterText) {
     state.filterText = filterText

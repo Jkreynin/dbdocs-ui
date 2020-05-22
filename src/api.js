@@ -28,6 +28,14 @@ export function getTags() {
   });
 }
 
+export function getSchemas() {
+  return axios({
+    method: "get",
+    url: baseURL + "api/schemas/",
+    headers: authHeader
+  });
+}
+
 export function refresh() {
   return axios({
     method: "get",

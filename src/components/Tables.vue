@@ -1,5 +1,10 @@
 <template>
-  <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+  <div
+    v-infinite-scroll="loadMore"
+    infinite-scroll-disabled="busy"
+    infinite-scroll-distance="10"
+    v-if="filteredTables.length > 0"
+  >
     <spinner v-if="spin" />
     <div class="row" v-if="!readMode">
       <div class="col-4" :key="table.schema+table.name" v-for="table in trimmedTables">

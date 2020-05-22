@@ -7,43 +7,10 @@
 </template>
 
 <script>
-import * as api from "./api.js";
-import { mapActions, mapMutations } from "vuex";
 export default {
   name: "app",
   data() {
-    return {
-      componentKey: 0,
-      busy: false
-    };
-  },
-  methods: {
-    ...mapActions("tables", ["loadTables", "loadTags"]),
-    ...mapMutations("tables", {
-      setReadMode: "SET_READ_MODE"
-    }),
-    backToDefault() {
-      this.setReadMode(false);
-    },
-    refreshTables() {
-      this.busy = true;
-      api
-        .refresh()
-        .then(() => {
-          this.loadTables();
-          this.loadTags();
-          this.componentKey += 1;
-          this.busy = false;
-          this.$toasted.show("Refreshed Successfully!", {
-            icon: "fa-check",
-            className: "customSuccessToast"
-          });
-        })
-        .catch(() => {
-          this.$toasted.show("Could not synchronize tables");
-          this.busy = false;
-        });
-    }
+    return {};
   }
 };
 </script>

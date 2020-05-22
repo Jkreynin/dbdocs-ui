@@ -24,10 +24,10 @@
           <i class="fas fa-pen"></i>
         </button>
       </div>
-      <p class="card-text" :class="descClass" v-if="!isInEdit">{{ mutableDesc }}</p>
+      <p class="card-text" v-if="!isInEdit">{{ mutableDesc }}</p>
       <input class="form-control" placeholder="Short description" v-model="mutableDesc" v-else />
       <div v-if="!isInEdit" class="tags">
-        <span class="badge" :class="tagsClass" v-for="tag in tags">
+        <span class="badge" :class="tagsClass" v-for="tag in displayTags">
           {{
           tag
           }}
@@ -39,7 +39,7 @@
         class="tagsSelect"
         :multiple="true"
         v-model="mutableTags"
-        :options="options"
+        :options="tags"
         placeholder="Add tags"
       ></multiselect>
       <div class="button-box">
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   name: "TableCard",
   data() {
@@ -62,7 +62,6 @@ export default {
       isInEdit: false,
       mutableDesc: this.table.desc,
       mutableTags: this.table.tags,
-      options: ["Read", "Write", "TBManager"],
       busy: false
     };
   },
@@ -70,7 +69,8 @@ export default {
     table: Object
   },
   computed: {
-    tags() {
+    ...mapState("tables", ["tags"]),
+    displayTags() {
       return this.table.tags.length == 0 ? ["No tags"] : this.table.tags;
     },
     descClass() {
@@ -123,10 +123,6 @@ input {
   cursor: pointer;
   font-weight: 600;
   color: #404040;
-}
-
-.card:hover {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .tableDetails {

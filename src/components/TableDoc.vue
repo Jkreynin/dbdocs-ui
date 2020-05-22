@@ -18,28 +18,74 @@
             {{ pageTable.name }}
             <span
               class="badge"
+              v-if="!isInEdit"
               :class="tagsClass"
               :key="tag"
-              v-for="tag in tags"
+              v-for="tag in tagsDisplay"
             >
               {{
               tag
               }}
             </span>
           </h3>
-          <h5 class="card-subtitle mb-2 text-muted" :class="descClass">{{ pageTable.desc }}</h5>
-          <vue-markdown :source="pageTable.add_desc" class="card-text" v-if="!isInEdit"></vue-markdown>
+          <h5
+            class="card-subtitle mb-2 text-muted"
+            v-if="!isInEdit"
+            :class="descClass"
+          >{{ pageTable.desc }}</h5>
+          <hr />
+          <div class="row">
+            <div class="col-6">
+              <input
+                class="form-control descInput"
+                placeholder="Short description"
+                v-model="pageTable.desc"
+                v-if="isInEdit"
+              />
+            </div>
+            <div class="col-6">
+              <multiselect
+                v-if="isInEdit"
+                id="multiple"
+                class="tagsSelect"
+                :multiple="true"
+                v-model="pageTable.tags"
+                :options="tags"
+                placeholder="Add tags"
+              ></multiselect>
+            </div>
+          </div>
+          <h6
+            class="sectionHeader"
+            v-if="pageTable.add_desc && !isInEdit"
+            @click="showAddDesc = !showAddDesc"
+          >
+            <i class="fas toggleSecion" :class="showAddDesc ? 'fa-caret-down' : 'fa-caret-right'"></i>
+            Description
+          </h6>
+          <transition name="add_desc">
+            <div>
+              <vue-markdown
+                v-show="showAddDesc"
+                :source="pageTable.add_desc"
+                class="card-text"
+                v-if="!isInEdit"
+              ></vue-markdown>
+            </div>
+          </transition>
           <textarea
             v-model="pageTable.add_desc"
             placeholder="Additional description (you can use Markdown!)"
             class="form-control"
             rows="2"
-            v-else
+            @keydown.tab.prevent="handleTab($event)"
+            v-if="isInEdit"
           ></textarea>
         </div>
         <button
           type="button"
           class="btn btn-circle"
+          v-if="!listMode"
           @click="editOrSave"
           :class="isInEdit ? 'btn-primary' : 'btn-light'"
         >
@@ -88,9 +134,10 @@
           </tbody>
         </table>
       </transition>
+      
     </div>
     <div class="card-footer text-muted" v-if="!listMode && !loading">
-      <a href="#/" class="btn btn-light">
+      <a @click="back" class="btn btn-light">
         <i class="fas fa-arrow-left"></i>
         Back
       </a>
@@ -111,6 +158,7 @@ export default {
       busy: false,
       loading: false,
       showColumns: true,
+      showAddDesc: true,
       componentKey: 0,
       pageTable: {},
       initPageTable: {}
@@ -145,19 +193,19 @@ export default {
     this.initPageTable = JSON.parse(JSON.stringify(this.pageTable));
   },
   mounted() {
-    EventBus.$on("cancel", tableData => {
+    EventBus.$on("cancel", eventData => {
       if (
-        this.pageTable.name == tableData.name &&
-        this.pageTable.schema == tableData.schema &&
+        this.pageTable.name == eventData.name &&
+        this.pageTable.schema == eventData.schema &&
         this.isInEdit
       ) {
-        this.cancel();
+        this.cancel(eventData.action);
       }
     });
   },
   computed: {
-    ...mapState("tables", ["currTable", "filterText"]),
-    tags() {
+    ...mapState("tables", ["currTable", "filterText", "tags"]),
+    tagsDisplay() {
       let def = ["No tags"];
       try {
         return this.pageTable.tags.length == 0 ? def : this.pageTable.tags;
@@ -190,6 +238,20 @@ export default {
   },
   methods: {
     ...mapActions("tables", ["updateTable", "loadSingleTable"]),
+    handleTab(event) {
+      if (event) {
+        event.preventDefault();
+        let startText = this.pageTable.add_desc.slice(
+          0,
+          event.target.selectionStart
+        );
+        let endText = this.pageTable.add_desc.slice(
+          event.target.selectionStart
+        );
+        this.pageTable.add_desc = `${startText}\t${endText}`;
+        event.target.selectionEnd = event.target.selectionStart + 1;
+      }
+    },
     async editOrSave() {
       if (this.isInEdit) {
         let newTable = Object.assign({}, this.pageTable);
@@ -208,18 +270,38 @@ export default {
       }
     },
     showModal() {
-      EventBus.$emit("show-modal", {
-        name: this.pageTable.name,
-        schema: this.pageTable.schema
-      });
+      this.checkForChanges(this.cancel, "cancel");
+    },
+    back() {
+      this.checkForChanges(
+        () => this.$router.push({ name: "tablefeed" }),
+        "back"
+      );
+    },
+    checkForChanges(func, action) {
+      if (
+        JSON.stringify(this.initPageTable) != JSON.stringify(this.pageTable)
+      ) {
+        EventBus.$emit("show-modal", {
+          name: this.pageTable.name,
+          schema: this.pageTable.schema,
+          action: action
+        });
+      } else {
+        func();
+      }
     },
     reset() {
       this.pageTable = JSON.parse(JSON.stringify(this.initPageTable));
     },
-    cancel() {
+    cancel(action) {
       this.isInEdit = false;
       this.reset();
       this.$modal.hide("dialog");
+
+      if (action == "back") {
+        this.$router.push({ name: "tablefeed" });
+      }
     },
     columnNameClass(columnName) {
       if (
@@ -340,7 +422,9 @@ table {
 }
 
 .table-enter,
-.table-leave-to {
+.table-leave-to,
+.add_desc-enter,
+.add_desc-leave-to {
   visibility: hidden;
   height: 0;
   margin: 0;
@@ -349,7 +433,13 @@ table {
 }
 
 .table-enter-active,
-.table-leave-active {
+.table-leave-active,
+.add_desc-leave-active,
+.add_desc-enter-active {
   transition: all 0.3s;
+}
+
+.descInput {
+  margin-bottom: 1%;
 }
 </style>
