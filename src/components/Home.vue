@@ -6,9 +6,11 @@
       </a>
       <div class="nav navbar-nav navbar-right">
         <div class="btn-nav">
-          <!-- <button type="button" class="action-btn">
-            <i class="fas fa-cog"></i>
-          </button> -->
+          <router-link class="link" :to="{name: 'settings'}">
+            <button type="button" class="action-btn">
+              <i class="fas fa-cog"></i>
+            </button>
+          </router-link>
           <button type="button" :disabled="busy" class="action-btn" @click="refreshTables">
             <i class="fas fa-sync" :class="{ 'fa-spin': busy }"></i>
           </button>
@@ -19,6 +21,7 @@
       <router-view></router-view>
     </div>
     <v-dialog />
+    <modal name="delete">Hi</modal>
   </div>
 </template>
 
@@ -36,7 +39,8 @@ export default {
     };
   },
   mounted() {
-    EventBus.$on("show-modal", payload => this.show(payload));
+    EventBus.$on("show-modal-cancel", payload => this.showCancel(payload));
+    EventBus.$on("show-modal-delete", payload => this.showDelete(payload));
   },
   methods: {
     ...mapActions("tables", ["loadTables", "loadTags"]),
@@ -85,10 +89,10 @@ export default {
     parseNumber(number) {
       return number > 0 ? `+${number}` : number;
     },
-    show(payload) {
+    showCancel(payload) {
       this.$modal.show("dialog", {
         title: "Wait a minute...",
-        text: "Are you sure you want to revert your changes?",
+        text: "Are you sure you want to <b style='color: var(--red)'>revert</b> your changes?",
         styles: ["box-shadow: none!important;"],
         buttons: [
           {
@@ -98,6 +102,26 @@ export default {
                 name: payload.name,
                 schema: payload.schema,
                 action: payload.action
+              });
+            }
+          },
+          {
+            title: "Cancel"
+          }
+        ]
+      });
+    },
+    showDelete(payload) {
+      this.$modal.show("dialog", {
+        title: "Wait a minute...",
+        text: `Are you sure you want to <b style='color: var(--red)'>archive</b> <b>${payload.schema}.${payload.name}</b> docs?`,
+        buttons: [
+          {
+            title: "Archive",
+            handler: () => {
+              EventBus.$emit("delete", {
+                name: payload.name,
+                schema: payload.schema
               });
             }
           },

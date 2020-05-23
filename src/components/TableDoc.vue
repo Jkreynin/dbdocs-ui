@@ -16,17 +16,9 @@
           <h6 class="schema">{{ pageTable.schema }}</h6>
           <h3 class="card-title">
             {{ pageTable.name }}
-            <span
-              class="badge"
-              v-if="!isInEdit"
-              :class="tagsClass"
-              :key="tag"
-              v-for="tag in tagsDisplay"
-            >
-              {{
-              tag
-              }}
-            </span>
+            <div v-if="!isInEdit">
+              <span class="badge" :class="tagsClass" :key="tag" v-for="tag in tagsDisplay">{{tag}}</span>
+            </div>
           </h3>
           <h5
             class="card-subtitle mb-2 text-muted"
@@ -50,7 +42,7 @@
                 class="tagsSelect"
                 :multiple="true"
                 v-model="pageTable.tags"
-                :options="tags"
+                :options="tagsArray"
                 placeholder="Add tags"
               ></multiselect>
             </div>
@@ -84,14 +76,19 @@
         </div>
         <button
           type="button"
-          class="btn btn-circle"
+          class="btn btn-circle fixedRight"
           v-if="!listMode"
           @click="editOrSave"
           :class="isInEdit ? 'btn-primary' : 'btn-light'"
         >
           <i class="fas" :class="buttonIconClass"></i>
         </button>
-        <button type="button" v-if="isInEdit" class="btn btn-circle cancel" @click="showModal">
+        <button
+          type="button"
+          v-if="isInEdit"
+          class="btn btn-circle fixedRight cancel"
+          @click="showModal"
+        >
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -134,7 +131,6 @@
           </tbody>
         </table>
       </transition>
-      
     </div>
     <div class="card-footer text-muted" v-if="!listMode && !loading">
       <a @click="back" class="btn btn-light">
@@ -146,7 +142,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import VueMarkdown from "vue-markdown";
 import Spinner from "./Spinner.vue";
 import { EventBus } from "../eventbus";
@@ -204,7 +200,8 @@ export default {
     });
   },
   computed: {
-    ...mapState("tables", ["currTable", "filterText", "tags"]),
+    ...mapState("tables", ["currTable", "filterText"]),
+    ...mapGetters("tables", ["tagsArray"]),
     tagsDisplay() {
       let def = ["No tags"];
       try {
@@ -282,7 +279,7 @@ export default {
       if (
         JSON.stringify(this.initPageTable) != JSON.stringify(this.pageTable)
       ) {
-        EventBus.$emit("show-modal", {
+        EventBus.$emit("show-modal-cancel", {
           name: this.pageTable.name,
           schema: this.pageTable.schema,
           action: action
@@ -441,5 +438,12 @@ table {
 
 .descInput {
   margin-bottom: 1%;
+  min-height: 40px;
+  display: block;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
+  padding-top: 8px;
+  background: #fff;
+  font-size: 14px;
 }
 </style>

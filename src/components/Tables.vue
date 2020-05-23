@@ -3,7 +3,6 @@
     v-infinite-scroll="loadMore"
     infinite-scroll-disabled="busy"
     infinite-scroll-distance="10"
-    v-if="filteredTables.length > 0"
   >
     <spinner v-if="spin" />
     <div class="row" v-if="!readMode">

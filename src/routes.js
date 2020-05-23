@@ -2,13 +2,14 @@ import VueRouter from "vue-router";
 import Home from "./components/Home";
 import TableDoc from "./components/TableDoc";
 import TableFeed from "./components/TableFeed";
+import Settings from "./components/Settings";
 import Login from "./components/Login";
 
 let routes = [
   {
     path: "/",
     component: Home,
-    name: "home",
+    // name: "home",
     children: [
       {
         path: "",
@@ -20,6 +21,11 @@ let routes = [
         component: TableDoc,
         props: true,
         name: "table"
+      },
+      {
+        path: "/settings",
+        component: Settings,
+        name: "settings"
       }
     ]
   },

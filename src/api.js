@@ -20,6 +20,14 @@ export function getTable(schema, name) {
   });
 }
 
+export function deleteTable(schema, name) {
+  return axios({
+    method: "delete",
+    url: baseURL + `api/tables/${schema}/${name}`,
+    headers: authHeader
+  });
+}
+
 export function getTags() {
   return axios({
     method: "get",
@@ -49,6 +57,15 @@ export function updateTable(tableData) {
     method: "put",
     data: tableData,
     url: baseURL + "api/table",
+    headers: authHeader
+  });
+}
+
+export function saveTags(tags) {
+  return axios({
+    method: "put",
+    data: tags,
+    url: baseURL + "api/tags",
     headers: authHeader
   });
 }

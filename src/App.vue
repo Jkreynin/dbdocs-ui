@@ -7,10 +7,21 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "app",
   data() {
     return {};
+  },
+  methods: {
+    ...mapActions("tables", ["loadTags"])
+  },
+  async created() {
+    try {
+      await this.loadTags();
+    } catch (error) {
+      this.$toasted.show("Could not load tags");
+    }
   }
 };
 </script>

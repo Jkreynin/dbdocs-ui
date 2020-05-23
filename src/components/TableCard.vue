@@ -17,11 +17,19 @@
 
         <button
           type="button"
-          class="btn btn-circle btn-light"
+          class="btn btn-circle fixedRight btn-light"
           @click="isInEdit = true"
           v-if="!isInEdit"
         >
           <i class="fas fa-pen"></i>
+        </button>
+        <button
+          type="button"
+          v-if="!isInEdit"
+          @click="handleDelete()"
+          class="btn btn-circle fixedRight hide btn-light"
+        >
+          <i class="far fa-trash-alt"></i>
         </button>
       </div>
       <p class="card-text" v-if="!isInEdit">{{ mutableDesc }}</p>
@@ -39,7 +47,7 @@
         class="tagsSelect"
         :multiple="true"
         v-model="mutableTags"
-        :options="tags"
+        :options="tagsArray"
         placeholder="Add tags"
       ></multiselect>
       <div class="button-box">
@@ -54,7 +62,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import { EventBus } from "../eventbus";
 export default {
   name: "TableCard",
   data() {
@@ -65,11 +74,21 @@ export default {
       busy: false
     };
   },
+  mounted() {
+    EventBus.$on("delete", eventData => {
+      if (
+        this.table.name == eventData.name &&
+        this.table.schema == eventData.schema
+      ) {
+        this.delete(eventData);
+      }
+    });
+  },
   props: {
     table: Object
   },
   computed: {
-    ...mapState("tables", ["tags"]),
+    ...mapGetters("tables", ["tagsArray"]),
     displayTags() {
       return this.table.tags.length == 0 ? ["No tags"] : this.table.tags;
     },
@@ -81,7 +100,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions("tables", ["updateTable"]),
+    ...mapActions("tables", ["updateTable", "deleteTable"]),
     async save() {
       let newTable = Object.assign({}, this.table);
       newTable.desc = this.mutableDesc;
@@ -103,6 +122,24 @@ export default {
     reset() {
       this.mutableDesc = this.table.desc;
       this.mutableTags = this.table.tags;
+    },
+    handleDelete() {
+      EventBus.$emit("show-modal-delete", {
+        name: this.table.name,
+        schema: this.table.schema
+      });
+    },
+    async delete(tableToDelete) {
+      try {
+        await this.deleteTable({
+          schema: tableToDelete.schema,
+          name: tableToDelete.name
+        });
+      } catch (error) {
+        this.$toasted.show("Could not save changes");
+      }
+
+      this.$modal.hide("dialog");
     }
   }
 };
@@ -110,6 +147,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.hide {
+  right: 52px !important;
+}
+
 input {
   margin-bottom: 3% !important;
 }

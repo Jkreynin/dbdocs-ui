@@ -3,15 +3,18 @@
     min-width: 30px !important;
     height: 30px !important;
     padding: 6px 0px !important;
-    position: absolute;
-    right: 10px;
-    top: 10px;
     border-radius: 15px !important;
     text-align: center !important;
     font-size: 12px !important;
     z-index: 1;
     line-height: 1.42857 !important;
     margin-bottom: 1%;
+}
+
+.fixedRight {
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 
 .badge {
@@ -72,10 +75,15 @@ input.form-control:focus {
     color: #adadad !important;
 }
 
-.container, .container-fluid {
+.container,
+.container-fluid {
     margin-top: 1%;
 }
 
 .row {
     margin-bottom: 1%;
+}
+
+.button-box .btn {
+    margin-right: 2%;
 }

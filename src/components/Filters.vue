@@ -15,7 +15,8 @@
           id="multiple"
           :multiple="true"
           v-model="filterTagsData"
-          :options="tags"
+          :options="tagsArray"
+          
           placeholder="Filter by tags..."
         ></multiselect>
       </div>
@@ -59,7 +60,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 export default {
   name: "Filters",
   data() {
@@ -67,25 +68,14 @@ export default {
   },
   async created() {
     try {
-      await this.loadTags();
-    } catch (error) {
-      this.$toasted.show("Could not load tags");
-    }
-
-    try {
       await this.loadSchemas();
     } catch (error) {
       this.$toasted.show("Could not load schemas");
     }
   },
   computed: {
-    ...mapState("tables", [
-      "filterText",
-      "filterTags",
-      "readMode",
-      "tags",
-      "schemas"
-    ]),
+    ...mapState("tables", ["filterText", "filterTags", "readMode", "schemas"]),
+    ...mapGetters("tables", ["tagsArray"]),
     filterTextData: {
       get() {
         return this.filterText;
@@ -104,7 +94,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions("tables", ["loadTags", "loadSchemas"]),
+    ...mapActions("tables", ["loadSchemas"]),
     ...mapMutations("tables", {
       setFilterText: "SET_FILTER_TEXT",
       setFilterTags: "SET_FILTER_TAGS",
@@ -139,26 +129,6 @@ export default {
 
 #search:focus {
   border: 1px solid #e8e8e8 !important;
-}
-
-.multiselect__placeholder {
-  padding: 0;
-}
-
-.custom-control-label {
-  color: var(--dark-grey);
-}
-
-.multiselect__tag {
-  background: var(--main-color);
-}
-
-.multiselect__tag i:hover {
-  background: var(--darker-main);
-}
-
-.multiselect__tag-icon:after {
-  color: white;
 }
 
 .btn-disabled {

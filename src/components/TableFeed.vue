@@ -6,7 +6,7 @@
     <div class="empty" v-else>
       <hr />
       <p>
-        <i class="fas fa-search"></i> No tables were found...
+        <i class="fas fa-table"></i> No tables were found...
       </p>
       <hr />
     </div>

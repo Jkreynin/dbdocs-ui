@@ -58,6 +58,9 @@ const getters = {
   },
   loadMoreAmount(state) {
     return state.readMode ? 2 : 9
+  },
+  tagsArray(state) {
+    return state.tags.map(tag => tag.name);
   }
 }
 
@@ -81,6 +84,14 @@ const actions = {
   async updateTable({ commit }, data) {
     await api.updateTable(data.table)
     commit('SET_TABLE', data.table)
+  },
+  async deleteTable({ commit }, data) {
+    await api.deleteTable(data.schema, data.name)
+    commit('DELETE_TABLE', data)
+  },
+  async saveTags({ commit, state }) {
+    state.tags.forEach(tag => delete tag.new);
+    await api.saveTags(state.tags);
   }
 }
 
@@ -123,8 +134,26 @@ const mutations = {
   SET_TABLE(state, currTable) {
     let tableIndex = state.tables.findIndex((table => table.name == currTable.name));
     Vue.set(state.tables, tableIndex, currTable);
-
-  }
+  },
+  ADD_TAG(state, newTag) {
+    state.tags.push(newTag);
+  },
+  DELETE_TAG(state, delTagName) {
+    let tagIndex = state.tags.findIndex((tag => tag.name == delTagName));
+    if (tagIndex !== -1) {
+      state.tags.splice(tagIndex, 1);
+    }
+  },
+  DELETE_TABLE(state, tableData) {
+    let tableIndex = state.tables.findIndex((table => table.name == tableData.name && table.schema == tableData.schema));
+    if (tableIndex !== -1) {
+      state.tables.splice(tableIndex, 1);
+    }
+  },
+  UPDATE_TAG(state, updateData) {
+    let tagIndex = state.tags.findIndex((tag => tag.name == updateData.oldName));
+    Vue.set(state.tags, tagIndex, updateData.tagData);
+  },
 }
 
 export default {

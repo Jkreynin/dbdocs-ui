@@ -21,6 +21,10 @@
     --dark-grey: #37474f;
 }
 
+body {
+    overflow-y: scroll;
+}
+
 * {
     font-family: Lato, openSans;
 }
@@ -47,4 +51,24 @@
 p {
     text-align: start !important;
     unicode-bidi: plaintext !important;
+}
+
+.multiselect__placeholder {
+    padding: 0!important;
+}
+
+.custom-control-label {
+    color: var(--dark-grey)!important;;
+}
+
+.multiselect__tag {
+    background: var(--main-color)!important;;
+}
+
+.multiselect__tag i:hover {
+    background: var(--darker-main)!important;;
+}
+
+.multiselect__tag-icon:after {
+    color: white!important;;
 }
