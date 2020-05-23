@@ -2,7 +2,7 @@
   <div
     class="card"
     @cancel="cancel"
-    :key="componentKey"
+    :key="$route.params.name"
     :class="{ cardInEdit: isInEdit }"
     v-if="Object.keys(this.pageTable).length != 0"
   >
@@ -119,6 +119,11 @@
                     :class="keyClass(type)"
                   ></i>
                 </span>
+                <a
+                  v-if="column.constraint_types.includes('FOREIGN KEY')"
+                  @click="goToRef(column.name)"
+                  class="btn btn-light btn-sm reference"
+                >See reference</a>
               </td>
               <td>{{ column.type }}</td>
               <td class="desc" v-if="!isInEdit" style="text-align:right">
@@ -142,10 +147,11 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from "vuex";
+import { mapActions, mapState, mapGetters, mapMutations } from "vuex";
 import VueMarkdown from "vue-markdown";
 import Spinner from "./Spinner.vue";
 import { EventBus } from "../eventbus";
+import * as api from "../api.js";
 export default {
   name: "TableDoc",
   data() {
@@ -155,7 +161,6 @@ export default {
       loading: false,
       showColumns: true,
       showAddDesc: true,
-      componentKey: 0,
       pageTable: {},
       initPageTable: {}
     };
@@ -168,7 +173,8 @@ export default {
     listMode: { type: Boolean, default: false },
     name: String,
     schema: String,
-    table: Object
+    table: Object,
+    column: String
   },
   async created() {
     if (!this.listMode) {
@@ -270,10 +276,13 @@ export default {
       this.checkForChanges(this.cancel, "cancel");
     },
     back() {
-      this.checkForChanges(
-        () => this.$router.push({ name: "tablefeed" }),
-        "back"
-      );
+      if (!(window.history.length > 2)) {
+        this.$router.push({ name: "tablefeed" });
+      } else {
+        this.checkForChanges(() => {
+          this.$router.go(-1);
+        }, "back");
+      }
     },
     checkForChanges(func, action) {
       if (
@@ -307,6 +316,8 @@ export default {
         columnName.includes(this.filterText)
       ) {
         return "highlight";
+      } else if (columnName == this.column) {
+        return "pkRef";
       } else {
         return "";
       }
@@ -322,6 +333,24 @@ export default {
         default:
           return "";
       }
+    },
+    goToRef(column) {
+      api
+        .getRefTable(this.pageTable.schema, this.pageTable.name, column)
+        .then(result => {
+          let data = result.data;
+          this.$router.push({
+            name: "table",
+            params: {
+              name: data.table,
+              schema: data.schema,
+              column: data.column
+            }
+          });
+        })
+        .catch(() => {
+          this.$toasted.show("Could not find referenced table");
+        });
     }
   }
 };
@@ -329,6 +358,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.reference {
+  font-size: 13px;
+  margin-left: 1%;
+  color: #1565c0;
+  padding: 0.5%;
+}
+
+.reference:hover {
+  color: var(--primary) !important;
+  font-weight: bold;
+}
 .btn-circle {
   font-size: 16px !important;
   width: 35px !important;
@@ -375,6 +415,10 @@ table {
 
 .highlight {
   color: var(--orange);
+}
+
+.pkRef {
+  color: var(--primary);
 }
 
 .key {

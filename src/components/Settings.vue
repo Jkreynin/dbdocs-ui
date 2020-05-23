@@ -2,7 +2,7 @@
   <div class="settings" :key="componentKey">
     <div class="row">
       <div class="col-10">
-        <h4 class="title">Tags </h4>
+        <h4 class="title">Tags</h4>
       </div>
       <div class="col-2 savebtn">
         <button type="button" v-if="changed" class="btn btn-secondary btn-circle add" @click="save">
@@ -41,7 +41,7 @@
         </ul>
       </div>
       <div class="col-4" v-if="updateMode">
-        <div class="card">
+        <div class="card h-100">
           <input
             class="form-control updateInput"
             :disabled="!updatedTag.new"
@@ -87,8 +87,13 @@ export default {
       componentKey: 0
     };
   },
-  created() {
-    this.initTags = JSON.parse(JSON.stringify(this.tags));
+  async created() {
+    try {
+      await this.loadTags();
+      this.initTags = JSON.parse(JSON.stringify(this.tags));
+    } catch (error) {
+      this.$toasted.show("Could not load tags");
+    }
   },
   computed: {
     ...mapState("tables", ["tags"]),
@@ -97,8 +102,7 @@ export default {
     }
   },
   methods: {
-    // ...mapActions("tables", ["saveTags"]),
-    ...mapActions("tables", ["saveTags"]),
+    ...mapActions("tables", ["saveTags", "loadTags"]),
     ...mapMutations("tables", {
       addTag: "ADD_TAG",
       deleteTag: "DELETE_TAG",
@@ -126,7 +130,7 @@ export default {
       try {
         await this.saveTags();
         this.componentKey += 1;
-        this.initTags = JSON.parse(JSON.stringify(this.tags));  
+        this.initTags = JSON.parse(JSON.stringify(this.tags));
         this.$toasted.show(`Changes were saved!`, {
           icon: "fa-check",
           className: "customSuccessToast"
@@ -144,6 +148,9 @@ export default {
   color: rgb(145, 145, 145);
 }
 
+.card {
+  max-height: 155px !important;
+}
 .badge {
   font-size: 14px;
 }

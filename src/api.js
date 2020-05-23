@@ -44,6 +44,14 @@ export function getSchemas() {
   });
 }
 
+export function getRefTable(schema, name, column) {
+  return axios({
+    method: "get",
+    url: baseURL + `api/columns/ref/${schema}/${name}/${column}`,
+    headers: authHeader
+  });
+}
+
 export function refresh() {
   return axios({
     method: "get",

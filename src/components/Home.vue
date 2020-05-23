@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="navbar">
-      <a class="navbar-brand" href="#/" @click="backToDefault">
+      <a class="navbar-brand" @click="backToDefault">
         <i class="fas fa-database"></i>DB Docs
       </a>
       <div class="nav navbar-nav navbar-right">
@@ -18,7 +18,7 @@
       </div>
     </nav>
     <div class="container" :key="componentKey">
-      <router-view></router-view>
+      <router-view :key="$route.fullPath"></router-view>
     </div>
     <v-dialog />
     <modal name="delete">Hi</modal>
@@ -41,6 +41,7 @@ export default {
   mounted() {
     EventBus.$on("show-modal-cancel", payload => this.showCancel(payload));
     EventBus.$on("show-modal-delete", payload => this.showDelete(payload));
+    EventBus.$on("show-modal-save", payload => this.showSave(payload));
   },
   methods: {
     ...mapActions("tables", ["loadTables", "loadTags"]),
@@ -49,6 +50,7 @@ export default {
     }),
     backToDefault() {
       this.setReadMode(false);
+      this.$router.push({ name: "tablefeed" });
     },
     refreshTables() {
       this.busy = true;
@@ -130,6 +132,11 @@ export default {
           }
         ]
       });
+    },
+    showSave(payload) {
+      this.$modal.show("dialog", {
+        text: "Addd changes?"
+      });
     }
   }
 };
@@ -154,7 +161,7 @@ export default {
 
 .navbar-brand,
 .navbar-brand:hover {
-  color: var(--main-color);
+  color: var(--main-color)!important;
   font-family: cairoB;
 }
 

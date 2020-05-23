@@ -28,6 +28,8 @@ Vue.component("multiselect", Multiselect);
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
 
+window.Store = store;
+
 new Vue({
   router,
   store,
