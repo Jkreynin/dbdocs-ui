@@ -63,17 +63,15 @@
         </div>
       </div>
     </div>
-    <div class="empty" v-else>
-      <hr />
-      <p>
-        <i class="fas fa-tag"></i> No tags yet...
-      </p>
-      <hr />
-    </div>
+    <NoItems v-else>
+      <i class="fas fa-tag"></i> No tags yet.
+    </NoItems>
   </div>
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import NoItems from "./NoItems";
+
 export default {
   name: "TablesFeed",
   data() {
@@ -86,6 +84,9 @@ export default {
       oldTagName: "",
       componentKey: 0
     };
+  },
+  components: {
+    NoItems
   },
   async created() {
     try {
@@ -143,11 +144,6 @@ export default {
 };
 </script>
 <style scoped>
-.empty p {
-  text-align: center !important;
-  color: rgb(145, 145, 145);
-}
-
 .card {
   max-height: 155px !important;
 }
