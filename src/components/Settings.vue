@@ -5,7 +5,12 @@
         <h4 class="title">Tags</h4>
       </div>
       <div class="col-2 savebtn">
-        <button type="button" v-if="changed" class="btn btn-secondary btn-circle add" @click="save">
+        <button
+          type="button"
+          v-if="changed && rendered"
+          class="btn btn-secondary btn-circle add"
+          @click="save"
+        >
           <i class="fas fa-save"></i>
         </button>
       </div>
@@ -66,10 +71,26 @@
     <NoItems v-else>
       <i class="fas fa-tag"></i> No tags yet.
     </NoItems>
+
+    <h4 class="title">Archive</h4>
+    <hr />
+    <input class="form-control" v-model="arcFilterVal" placeholder="Search tables..." />
+    <br />
+    <ul class="list-group archive" v-if="deletedTables.length > 0">
+      <li class="list-group-item" :key="table.name" v-for="table in deletedTables">
+        <span class="tableName">{{table.name}}</span>
+        <button type="button" class="update" @click="restore(table.name, table.schema)">
+          <i class="fas fa-trash-restore-alt"></i>
+        </button>
+      </li>
+    </ul>
+    <NoItems v-else>
+      <i class="fas fa-table"></i> No archived tables.
+    </NoItems>
   </div>
 </template>
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
+import { mapState, mapActions, mapMutations, mapGetters } from "vuex";
 import NoItems from "./NoItems";
 
 export default {
@@ -82,7 +103,8 @@ export default {
       updateMode: false,
       updatedTag: {},
       oldTagName: "",
-      componentKey: 0
+      componentKey: 0,
+      rendered: false
     };
   },
   components: {
@@ -95,19 +117,42 @@ export default {
     } catch (error) {
       this.$toasted.show("Could not load tags");
     }
+
+    try {
+      await this.loadTables();
+    } catch (error) {
+      this.$toasted.show("Could not load tables");
+    }
+
+    this.rendered = true;
   },
   computed: {
-    ...mapState("tables", ["tags"]),
+    ...mapState("tables", ["tags", "arcFilter"]),
+    ...mapGetters("tables", ["deletedTables"]),
     changed() {
       return JSON.stringify(this.initTags) != JSON.stringify(this.tags);
+    },
+    arcFilterVal: {
+      get() {
+        return this.arcFilter;
+      },
+      set(value) {
+        this.setArcFilter(value);
+      }
     }
   },
   methods: {
-    ...mapActions("tables", ["saveTags", "loadTags"]),
+    ...mapActions("tables", [
+      "saveTags",
+      "loadTags",
+      "loadTables",
+      "changeTableStatus"
+    ]),
     ...mapMutations("tables", {
       addTag: "ADD_TAG",
       deleteTag: "DELETE_TAG",
-      updateTag: "UPDATE_TAG"
+      updateTag: "UPDATE_TAG",
+      setArcFilter: "SET_ARC_FILTER"
     }),
     newTag() {
       if (this.tags.filter(tag => tag.name == this.name).length > 0) {
@@ -135,6 +180,17 @@ export default {
         this.$toasted.show(`Changes were saved!`, {
           icon: "fa-check",
           className: "customSuccessToast"
+        });
+      } catch (error) {
+        this.$toasted.show("Could not save changes");
+      }
+    },
+    async restore(tableName, schemaName) {
+      try {
+        await this.changeTableStatus({
+          schema: schemaName,
+          name: tableName,
+          status: { type: "restored" }
         });
       } catch (error) {
         this.$toasted.show("Could not save changes");
@@ -169,7 +225,11 @@ export default {
   font-size: 13px;
   color: #696969;
   margin-left: 10px;
-  text-align: center;
+}
+
+.tableName {
+  font-size: 15px;
+  color: #696969;
 }
 
 .title {
@@ -212,5 +272,9 @@ export default {
 
 .updateInput {
   margin-bottom: 3% !important;
+}
+
+.archive {
+  margin-bottom: 3%;
 }
 </style>

@@ -16,7 +16,6 @@
           :multiple="true"
           v-model="filterTagsData"
           :options="tagsArray"
-          
           placeholder="Filter by tags..."
         ></multiselect>
       </div>
@@ -44,16 +43,14 @@
 
     <div class="row filters">
       <div class="col-5">
-        <div class="btn-group mr-2 btn-group-sm" role="group" aria-label="Basic example">
-          <button
-            type="button"
-            :key="schema.name"
-            @click="toggleSchema(schema)"
-            v-for="schema in schemas"
-            class="btn"
-            :class="schema.active ? 'btn-enabled' : 'btn-disabled'"
-          >{{schema.name}}</button>
-        </div>
+        <button
+          type="button"
+          :key="schema.name"
+          @click="toggleSchema(schema)"
+          v-for="schema in schemas"
+          class="btn btn-sm schemabtn"
+          :class="schema.active ? 'btn-enabled' : 'btn-disabled'"
+        >{{schema.name}}</button>
       </div>
     </div>
   </div>
@@ -129,6 +126,10 @@ export default {
 
 #search:focus {
   border: 1px solid #e8e8e8 !important;
+}
+
+.schemabtn{
+  margin-right: 1.2%;
 }
 
 .btn-disabled {

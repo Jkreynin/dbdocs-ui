@@ -21,7 +21,6 @@
       <router-view :key="$route.fullPath"></router-view>
     </div>
     <v-dialog />
-    <modal name="delete">Hi</modal>
   </div>
 </template>
 
@@ -38,6 +37,19 @@ export default {
       busy: false
     };
   },
+  async created() {
+    try {
+      await this.loadTags();
+    } catch (error) {
+      this.$toasted.show("Could not load tags");
+    }
+
+    try {
+      await this.loadTables();
+    } catch (error) {
+      this.$toasted.show("Could not load tables");
+    }
+  },
   mounted() {
     EventBus.$on("show-modal-cancel", payload => this.showCancel(payload));
     EventBus.$on("show-modal-delete", payload => this.showDelete(payload));
@@ -46,10 +58,14 @@ export default {
   methods: {
     ...mapActions("tables", ["loadTables", "loadTags"]),
     ...mapMutations("tables", {
-      setReadMode: "SET_READ_MODE"
+      setReadMode: "SET_READ_MODE",
+      setFilterText: "SET_FILTER_TEXT",
+      setFilterTags: "SET_FILTER_TAGS"
     }),
     backToDefault() {
       this.setReadMode(false);
+      this.setFilterText("");
+      this.setFilterTags([]);
       this.$router.push({ name: "tablefeed" });
     },
     refreshTables() {
@@ -60,16 +76,17 @@ export default {
           this.loadTables();
           this.loadTags();
           this.componentKey += 1;
+          this.$forceUpdate();
           this.busy = false;
 
           let message = this.calculatedNumbers(result.data);
-          this.$toasted.show(`Synchronized Successfully! ${message}`, {
+          this.$toasted.show(`Synced tables! ${message}`, {
             icon: "fa-check",
             className: "customSuccessToast"
           });
         })
         .catch(() => {
-          this.$toasted.show("Could not synchronize tables");
+          this.$toasted.show("Could not sync tables");
           this.busy = false;
         });
     },
@@ -83,9 +100,6 @@ export default {
         message += `${this.parseNumber(data.columns)} Columns `;
       }
 
-      if (message == "") {
-        message = "No changes";
-      }
       return message;
     },
     parseNumber(number) {
@@ -94,7 +108,8 @@ export default {
     showCancel(payload) {
       this.$modal.show("dialog", {
         title: "Wait a minute...",
-        text: "Are you sure you want to <b style='color: var(--red)'>revert</b> your changes?",
+        text:
+          "Are you sure you want to <b style='color: var(--red)'>revert</b> your changes?",
         styles: ["box-shadow: none!important;"],
         buttons: [
           {
@@ -161,7 +176,7 @@ export default {
 
 .navbar-brand,
 .navbar-brand:hover {
-  color: var(--main-color)!important;
+  color: var(--main-color) !important;
   font-family: cairoB;
 }
 

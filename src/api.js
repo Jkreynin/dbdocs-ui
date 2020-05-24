@@ -20,10 +20,11 @@ export function getTable(schema, name) {
   });
 }
 
-export function deleteTable(schema, name) {
+export function changeTableStatus(schema, name, status) {
   return axios({
-    method: "delete",
-    url: baseURL + `api/tables/${schema}/${name}`,
+    method: "patch",
+    url: baseURL + `api/table/status/${schema}/${name}`,
+    data: status,
     headers: authHeader
   });
 }

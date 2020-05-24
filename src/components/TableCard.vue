@@ -100,7 +100,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions("tables", ["updateTable", "deleteTable"]),
+    ...mapActions("tables", ["updateTable", "changeTableStatus"]),
     async save() {
       let newTable = Object.assign({}, this.table);
       newTable.desc = this.mutableDesc;
@@ -131,9 +131,10 @@ export default {
     },
     async delete(tableToDelete) {
       try {
-        await this.deleteTable({
+        await this.changeTableStatus({
           schema: tableToDelete.schema,
-          name: tableToDelete.name
+          name: tableToDelete.name,
+          status: { type: "deleted" }
         });
       } catch (error) {
         this.$toasted.show("Could not save changes");

@@ -53,18 +53,16 @@
               v-if="pageTable.add_desc && !isInEdit"
               @click="showAddDesc = !showAddDesc"
             >
-              <i class="fas toggleSecion" :class="showAddDesc ? 'fa-caret-down' : 'fa-caret-right'"></i>
+              <i class="fas" :class="showAddDesc ? 'fa-caret-down' : 'fa-caret-right'"></i>
               Description
             </h6>
-            <transition name="add_desc">
-              <div>
-                <vue-markdown
-                  v-show="showAddDesc"
-                  :source="pageTable.add_desc"
-                  class="card-text"
-                  v-if="!isInEdit"
-                ></vue-markdown>
-              </div>
+            <transition name="adddesc">
+              <vue-markdown
+                v-show="showAddDesc"
+                :source="pageTable.add_desc"
+                class="card-text"
+                v-if="!isInEdit"
+              ></vue-markdown>
             </transition>
             <textarea
               v-model="pageTable.add_desc"
@@ -95,7 +93,7 @@
         </div>
 
         <h6 class="sectionHeader" @click="showColumns = !showColumns">
-          <i class="fas toggleSecion" :class="showColumns ? 'fa-caret-down' : 'fa-caret-right'"></i>
+          <i class="fas" :class="showColumns ? 'fa-caret-down' : 'fa-caret-right'"></i>
           Columns
         </h6>
         <transition name="table">
@@ -205,6 +203,11 @@ export default {
 
     // Used JSON.stringify instead of Object.assign to deep copy nested values as well!
     this.initPageTable = JSON.parse(JSON.stringify(this.pageTable));
+  },
+  watch: {
+    table(newValue, oldValue) {
+      this.pageTable = newValue;
+    }
   },
   mounted() {
     EventBus.$on("cancel", eventData => {
@@ -476,8 +479,8 @@ table {
 
 .table-enter,
 .table-leave-to,
-.add_desc-enter,
-.add_desc-leave-to {
+.adddesc-enter,
+.adddesc-leave-to {
   visibility: hidden;
   height: 0;
   margin: 0;
@@ -487,8 +490,8 @@ table {
 
 .table-enter-active,
 .table-leave-active,
-.add_desc-leave-active,
-.add_desc-enter-active {
+.adddesc-leave-active,
+.adddesc-enter-active {
   transition: all 0.3s;
 }
 

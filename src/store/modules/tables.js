@@ -11,20 +11,21 @@ const state = {
   schemas: [],
   loadMoreCounter: 0,
   alert: "",
-  undocFilterActive: false
+  undocFilterActive: false,
+  arcFilter: ""
 }
 
 const getters = {
 
   filteredTables(state) {
-    let tablesBySchema = state.tables.filter(table =>
+    let relevantTables = state.tables.filter(table =>
       state.schemas.filter(schema => schema.active)
         .map(schema => schema.name).includes(table.schema)
-    )
+    ).filter(table => table.is_deleted == false)
 
     let currFilter = state.filterText.toLowerCase();
 
-    let filterResult = tablesBySchema.filter(table =>
+    let filterResult = relevantTables.filter(table =>
       (table.name.toLowerCase().includes(currFilter) ||
         table.desc.toLowerCase().includes(currFilter) ||
         (state.readMode &&
@@ -39,7 +40,9 @@ const getters = {
 
     return filterResult;
   },
-
+  deletedTables(state) {
+    return state.tables.filter(table => table.is_deleted == true && table.name.includes(state.arcFilter));
+  },
   tableByID: state => (name, schema) => {
     return state.tables.filter(table => table.name == name && table.schema == schema)[0];
   },
@@ -85,9 +88,9 @@ const actions = {
     await api.updateTable(data.table)
     commit('SET_TABLE', data.table)
   },
-  async deleteTable({ commit }, data) {
-    await api.deleteTable(data.schema, data.name)
-    commit('DELETE_TABLE', data)
+  async changeTableStatus({ commit }, data) {
+    await api.changeTableStatus(data.schema, data.name, data.status)
+    commit('CHANGE_TABLE_STATUS', data)
   },
   async saveTags({ commit, state }) {
     state.tags.forEach(tag => delete tag.new);
@@ -115,6 +118,9 @@ const mutations = {
   SET_SCHEMA(state, currSchema) {
     let schemaIndex = state.schemas.findIndex((schema => schema.name == currSchema.name));
     Vue.set(state.schemas, schemaIndex, currSchema);
+  },
+  SET_ARC_FILTER(state, arcFilter) {
+    state.arcFilter = arcFilter
   },
   SET_FILTER_TEXT(state, filterText) {
     state.filterText = filterText
@@ -144,10 +150,14 @@ const mutations = {
       state.tags.splice(tagIndex, 1);
     }
   },
-  DELETE_TABLE(state, tableData) {
+  CHANGE_TABLE_STATUS(state, tableData) {
     let tableIndex = state.tables.findIndex((table => table.name == tableData.name && table.schema == tableData.schema));
     if (tableIndex !== -1) {
-      state.tables.splice(tableIndex, 1);
+      if (tableData.status.type == 'deleted') {
+        state.tables.splice(tableIndex, 1);
+      } else {
+        state.tables[tableIndex].is_deleted = false;
+      }
     }
   },
   UPDATE_TAG(state, updateData) {
